@@ -21,8 +21,12 @@ namespace WebCol.Controllers
 
         // GET: Productos
         public async Task<IActionResult> Index()
-        {            
-            var productos = await _context.Productos.Include(p => p.Principios).ToListAsync();
+        {
+            var productos = _context.Productos
+                .Include(p => p.ProductosPrincipios)
+                    .ThenInclude(pp => pp.Principio)
+                .ToList();
+
             return View(productos);
         }
 

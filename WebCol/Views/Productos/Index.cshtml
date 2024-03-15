@@ -21,7 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Registro)
             </th>
-            <th></th>
+            <th>
+                Principios
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -37,14 +39,15 @@
                 @Html.DisplayFor(modelItem => item.Registro)
             </td>
             <td>
-                    @foreach (var principio in item.Principios)
+                    @foreach (var productoPrincipio in item.ProductosPrincipios)
                     {
-                       <span>@principio.Nombre</span>
-                        @if (item.Principios.IndexOf(principio) < item.Principios.Count - 1)
+                        <span>@productoPrincipio.Principio.Nombre</span>
+                        @if (item.ProductosPrincipios.IndexOf(productoPrincipio) < item.ProductosPrincipios.Count - 1)
                         {
                             <span>, </span>
                         }
                     }
+
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

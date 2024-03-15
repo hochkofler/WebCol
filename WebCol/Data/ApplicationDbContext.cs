@@ -38,6 +38,7 @@ namespace WebCol.Data
                 .WithMany(p => p.ProductosPrincipios)
                 .HasForeignKey(pp => pp.PrincipioId);
 
+
             modelBuilder.Entity<AsignacionColumna>()
                 .HasOne(ac => ac.ProductoPrincipio)
                 .WithMany()

@@ -54,6 +54,40 @@ public static class SeedData
 
         return seedData;
     }
+
+    public static void GenerateProductoPrincipioSeedData(ApplicationDbContext context)
+    {
+        var random = new Random();
+        var productos = context.Productos.ToList();
+        var principios = context.Principios.ToList();
+
+        foreach (var producto in productos)
+        {
+            var numPrincipios = random.Next(1, 6);
+            var usedPrincipios = new HashSet<int>();
+
+            for (int i = 0; i < numPrincipios; i++)
+            {
+                var principioIndex = random.Next(principios.Count);
+                while (usedPrincipios.Contains(principioIndex))
+                {
+                    principioIndex = random.Next(principios.Count);
+                }
+
+                usedPrincipios.Add(principioIndex);
+                var principio = principios[principioIndex];
+
+                var productoPrincipio = new ProductoPrincipio
+                {
+                    ProductoId = producto.Id,
+                    PrincipioId = principio.Id
+                };
+
+                context.ProductosPrincipios.Add(productoPrincipio);
+            }
+        }
+        context.SaveChanges();
+    }
     public static List<FaseMovil> GenerateFasesMovilesSeedData()
     {
         List<FaseMovil> fasesMovilesSeedData = new List<FaseMovil>();
@@ -234,39 +268,9 @@ public static class SeedData
 
             if (!context.ProductosPrincipios.Any())
             {
-                // Obtener una lista de IDs de Productos y Principios disponibles
-                var productoIds = context.Productos.Select(p => p.Id).ToList();
-                //var principioIds = context.Principios.Select(p => p.Id).ToList();
-
-                // Sembrar 10 datos aleatorios en ProductosPrincipios
-                Random random = new Random();
-                foreach (var productoId in productoIds)
-                {
-                    // Seleccionar aleatoriamente un Producto y n principios
-
-                    int principiosPorProducto = random.Next(1, 5);
-                    var principiosElejibles = context.Principios.Select(p => p.Id).ToList();
-
-                    for (int i = 0; i < principiosPorProducto; i++)
-                    {
-                        var principioElejido = random.Next(1, principiosElejibles.Count);
-
-                        ProductoPrincipio productosPrincipios = new ProductoPrincipio
-                        {
-                            ProductoId = productoId,
-                            PrincipioId = principioElejido
-                        };
-
-                        if (!context.ProductosPrincipios.Any(pp => pp.ProductoId == productosPrincipios.ProductoId && pp.PrincipioId == productosPrincipios.PrincipioId))
-                        {
-                            context.ProductosPrincipios.Add(productosPrincipios);
-                            context.SaveChanges();
-                        }
-                        principiosElejibles.RemoveAt(principioElejido);
-                    }
-                        
-                };
+                GenerateProductoPrincipioSeedData(context);
             }
+
         }
     }    
 }

@@ -297,12 +297,6 @@ namespace WebCol.Data.Migrations
                     b.Property<int>("PrincipioId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductoPrincipioId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductoPrincipioId"));
-
                     b.HasKey("ProductoId", "PrincipioId");
 
                     b.HasIndex("PrincipioId");
