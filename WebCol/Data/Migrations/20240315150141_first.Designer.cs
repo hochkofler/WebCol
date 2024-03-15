@@ -12,7 +12,7 @@ using WebCol.Data;
 namespace WebCol.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240315132946_first")]
+    [Migration("20240315150141_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -301,7 +301,10 @@ namespace WebCol.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ProductoPrincipioId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductoPrincipioId"));
 
                     b.HasKey("ProductoId", "PrincipioId");
 
