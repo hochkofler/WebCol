@@ -38,8 +38,8 @@ namespace WebCol.Models
         [Display(Name = "Presión Maxima")]
         public decimal PresionMax { get; set; }
         [Display(Name = "Modelo")]
-        public required int MarcaId { get; set; }
-        public Modelo? Marca { get; set; }
+        public required int ModeloId { get; set; }
+        public Modelo? Modelo { get; set; }
         public List<FaseMovil>? FasesMoviles { get; set; }
         public ICollection<Analisis> Analisis { get; set; } = new List<Analisis>();
     }

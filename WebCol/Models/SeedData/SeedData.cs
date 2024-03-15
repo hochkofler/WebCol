@@ -45,7 +45,7 @@ public static class SeedData
                 PhMin = phMin[rnd.Next(phMin.Length)],
                 PhMax = phMax[rnd.Next(phMax.Length)],
                 PresionMax = rnd.Next(0, 2000),
-                MarcaId = rnd.Next(1, 17), // Considerando que hay 17 marcas disponibles
+                ModeloId = rnd.Next(1, 17), // Considerando que hay 17 marcas disponibles
                 FasesMoviles = fasesMoviles
             };
 

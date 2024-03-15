@@ -152,7 +152,7 @@ namespace WebCol.Data.Migrations
                     b.Property<DateTime>("FechaIngreso")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MarcaId")
+                    b.Property<int>("ModeloId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("PhMax")
@@ -166,7 +166,7 @@ namespace WebCol.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MarcaId");
+                    b.HasIndex("ModeloId");
 
                     b.ToTable("Columnas");
                 });
@@ -321,7 +321,7 @@ namespace WebCol.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Proveedor");
+                    b.ToTable("Proveedores");
                 });
 
             modelBuilder.Entity("ColumnaFaseMovil", b =>
@@ -379,13 +379,13 @@ namespace WebCol.Data.Migrations
 
             modelBuilder.Entity("WebCol.Models.Columna", b =>
                 {
-                    b.HasOne("WebCol.Models.Modelo", "Marca")
+                    b.HasOne("WebCol.Models.Modelo", "Modelo")
                         .WithMany("Columnas")
-                        .HasForeignKey("MarcaId")
+                        .HasForeignKey("ModeloId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Marca");
+                    b.Navigation("Modelo");
                 });
 
             modelBuilder.Entity("WebCol.Models.Lote", b =>
@@ -402,7 +402,7 @@ namespace WebCol.Data.Migrations
             modelBuilder.Entity("WebCol.Models.Modelo", b =>
                 {
                     b.HasOne("WebCol.Models.Proveedor", "Proveedor")
-                        .WithMany("Marcas")
+                        .WithMany("Modelo")
                         .HasForeignKey("ProveedorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -471,7 +471,7 @@ namespace WebCol.Data.Migrations
 
             modelBuilder.Entity("WebCol.Models.Proveedor", b =>
                 {
-                    b.Navigation("Marcas");
+                    b.Navigation("Modelo");
                 });
 #pragma warning restore 612, 618
         }

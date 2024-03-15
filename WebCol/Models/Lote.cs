@@ -19,4 +19,6 @@ namespace WebCol.Models
         public int ProductoId { get; set; }
         public Producto? Producto { get; set; }
     }
+    // sum two numbers
+
 }

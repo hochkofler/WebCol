@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public required string Nombre { get; set; }
-        public ICollection<Modelo> Marcas { get; } = new List<Modelo>();
+        public ICollection<Modelo> Modelo { get; } = new List<Modelo>();
     }
 }
