@@ -204,14 +204,14 @@ public static class SeedData
                 var principios = context.Principios.ToList();
                 var productos = new Producto[]
                 {                
-                    new Producto { Nombre = "Panadol", Tipo = "PT", Registro = "123456", Principios = principios.Where(pa => pa.Nombre == "Paracetamol").ToList() },
-                    new Producto { Nombre = "Nurofen", Tipo = "PT", Registro = "789012", Principios = principios.Where(pa => pa.Nombre == "Ibuprofeno").ToList() },
-                    new Producto { Nombre = "Prilosec", Tipo = "PT", Registro = "345678", Principios = principios.Where(pa => pa.Nombre == "Omeprazol").ToList() },
-                    new Producto { Nombre = "Claritin", Tipo = "PT", Registro = "901234", Principios = principios.Where(pa => pa.Nombre == "Loratadina").ToList() },
-                    new Producto { Nombre = "Amoxil", Tipo = "PT", Registro = "567890", Principios = principios.Where(pa => pa.Nombre == "Amoxicilina").ToList() },
-                    new Producto { Nombre = "Panadol Plus", Tipo = "Tableta", Registro = "123456", Principios = principios.Where(pa => pa.Nombre == "Paracetamol" || pa.Nombre == "Ibuprofeno").ToList() },
-                    new Producto { Nombre = "Clarixen", Tipo = "Jarabe", Registro = "789012", Principios = principios.Where(pa => pa.Nombre == "Loratadina" || pa.Nombre == "Ibuprofeno").ToList() },
-                    new Producto { Nombre = "Amoxifin", Tipo = "Cápsula", Registro = "345678", Principios = principios.Where(pa => pa.Nombre == "Amoxicilina" || pa.Nombre == "Omeprazol").ToList() }
+                    new Producto { Nombre = "Panadol", Tipo = "PT", Registro = "123456" },
+                    new Producto { Nombre = "Nurofen", Tipo = "PT", Registro = "789012" },
+                    new Producto { Nombre = "Prilosec", Tipo = "PT", Registro = "345678" },
+                    new Producto { Nombre = "Claritin", Tipo = "PT", Registro = "901234" },
+                    new Producto { Nombre = "Amoxil", Tipo = "PT", Registro = "567890" },
+                    new Producto { Nombre = "Panadol Plus", Tipo = "Tableta", Registro = "123456"},
+                    new Producto { Nombre = "Clarixen", Tipo = "Jarabe", Registro = "789012"},
+                    new Producto { Nombre = "Amoxifin", Tipo = "Cápsula", Registro = "345678" }
                  };
                 context.Productos.AddRange(productos);
                 context.SaveChanges();
@@ -236,30 +236,36 @@ public static class SeedData
             {
                 // Obtener una lista de IDs de Productos y Principios disponibles
                 var productoIds = context.Productos.Select(p => p.Id).ToList();
-                var principioIds = context.Principios.Select(p => p.Id).ToList();
+                //var principioIds = context.Principios.Select(p => p.Id).ToList();
 
                 // Sembrar 10 datos aleatorios en ProductosPrincipios
                 Random random = new Random();
-                for (int i = 0; i < 10; i++)
+                foreach (var productoId in productoIds)
                 {
-                    // Seleccionar aleatoriamente un Producto y un Principio
-                    int productoId = productoIds[random.Next(0, productoIds.Count)];
-                    int principioId = principioIds[random.Next(0, principioIds.Count)];
+                    // Seleccionar aleatoriamente un Producto y n principios
 
-                    // Crear una nueva entrada en ProductosPrincipios
-                    ProductoPrincipio productosPrincipios = new ProductoPrincipio
+                    int principiosPorProducto = random.Next(1, 5);
+                    var principiosElejibles = context.Principios.Select(p => p.Id).ToList();
+
+                    for (int i = 0; i < principiosPorProducto; i++)
                     {
-                        ProductoId = productoId,
-                        PrincipioId = principioId
-                    };
+                        var principioElejido = random.Next(1, principiosElejibles.Count);
 
-                    // Agregar la nueva entrada a la base de datos
-                    context.ProductosPrincipios.Add(productosPrincipios);
-                }
+                        ProductoPrincipio productosPrincipios = new ProductoPrincipio
+                        {
+                            ProductoId = productoId,
+                            PrincipioId = principioElejido
+                        };
 
-                // Guardar los cambios en la base de datos
-                context.SaveChanges();
-
+                        if (!context.ProductosPrincipios.Any(pp => pp.ProductoId == productosPrincipios.ProductoId && pp.PrincipioId == productosPrincipios.PrincipioId))
+                        {
+                            context.ProductosPrincipios.Add(productosPrincipios);
+                            context.SaveChanges();
+                        }
+                        principiosElejibles.RemoveAt(principioElejido);
+                    }
+                        
+                };
             }
         }
     }    

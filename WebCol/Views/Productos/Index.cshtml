@@ -36,6 +36,17 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Registro)
             </td>
+
+            <td>
+                    @foreach (var principio in item.Principios)
+                    {
+                       <span>@principio.Nombre</span>
+                        @if (item.Principios.IndexOf(principio) < item.Principios.Count - 1)
+                        {
+                            <span>, </span>
+                        }
+                    }
+            </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
