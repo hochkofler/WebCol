@@ -27,6 +27,21 @@
                 <input asp-for="Registro" class="form-control" />
                 <span asp-validation-for="Registro" class="text-danger"></span>
             </div>
+            <br />
+            <div class="form-group" style="OVERFLOW-Y:scroll; WIDTH:360px; HEIGHT:290px">
+                <b>Seleccione los Principios Activos: </b> <br />
+                @{
+                    var select = ViewData["Principios"] as SelectList;
+                    if (select != null && select.ToList().Count > 0)
+                    {
+                        foreach (var item in select.ToList())
+                        {
+                            <input type="checkbox" name="selectedPrincipios" value="@item.Value" @(Html.Raw(item.Selected ? "checked=\"checked\"" : "")) /> @item.Text  <br />
+                        }
+                    }
+                }
+            </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

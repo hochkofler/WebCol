@@ -21,11 +21,9 @@ namespace WebCol.Controllers
 
         // GET: Productos
         public async Task<IActionResult> Index()
-
-        {
-            return View(await _context.Productos.Include(p => p.ProductosPrincipios)
-                                                .ThenInclude(pp => pp.Principio)
-                                            .ToListAsync());
+        {            
+            var productos = await _context.Productos.Include(p => p.Principios).ToListAsync();
+            return View(productos);
         }
 
         // GET: Productos/Details/5
@@ -49,6 +47,7 @@ namespace WebCol.Controllers
         // GET: Productos/Create
         public IActionResult Create()
         {
+            ViewData["Principios"] = new SelectList(_context.Principios, "Id", "Nombre");
             return View();
         }
 
@@ -57,10 +56,22 @@ namespace WebCol.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Tipo,Registro")] Producto producto)
+        public async Task<IActionResult> Create(string[] selectedPrincipios, [Bind("Id,Nombre,Tipo,Registro")] Producto producto)
         {
             if (ModelState.IsValid)
             {
+                if (selectedPrincipios != null)
+                {
+                    producto.Principios = new List<Principio>();
+                    foreach (var principioId in selectedPrincipios)
+                    {
+                        var principio = await _context.Principios.FindAsync(int.Parse(principioId));
+                        if (principio != null)
+                        {
+                            producto.Principios.Add(principio);
+                        }
+                    }
+                }
                 _context.Add(producto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
