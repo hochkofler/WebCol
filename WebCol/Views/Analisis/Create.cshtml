@@ -1,0 +1,72 @@
+﻿@model WebCol.Models.Analisis
+
+@{
+    ViewData["Title"] = "Agregar Analisis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.HiddenFor(model => model.LoteId)
+            <div class="form-group">
+                <label asp-for="PrincipiosActivos" class="control-label"></label>
+                <br />
+                <select asp-for="PrincipiosActivos" class="form-control" asp-items="ViewBag.Principios">
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnaId" class="control-label"></label>
+                <input asp-for="ColumnaId" class="form-control" />
+                <span asp-validation-for="ColumnaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ph" class="control-label"></label>
+                <input asp-for="Ph" class="form-control" />
+                <span asp-validation-for="Ph" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TiempoCorrida" class="control-label"></label>
+                <input asp-for="TiempoCorrida" class="form-control" />
+                <span asp-validation-for="TiempoCorrida" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Flujo" class="control-label"></label>
+                <input asp-for="Flujo" class="form-control" />
+                <span asp-validation-for="Flujo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Temperatura" class="control-label"></label>
+                <input asp-for="Temperatura" class="form-control" />
+                <span asp-validation-for="Temperatura" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PresionIni" class="control-label"></label>
+                <input asp-for="PresionIni" class="form-control" />
+                <span asp-validation-for="PresionIni" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PresionFin" class="control-label"></label>
+                <input asp-for="PresionFin" class="form-control" />
+                <span asp-validation-for="PresionFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comentario" class="control-label"></label>
+                <input asp-for="Comentario" class="form-control" />
+                <span asp-validation-for="Comentario" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,119 @@
+﻿@model IEnumerable<WebCol.Models.Analisis>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaFinal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoriaOrigen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ph)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TiempoCorrida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Flujo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Temperatura)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PresionIni)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PresionFin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlatosIni)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlatosFin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Comportamiento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Comentario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Lote)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Columnas)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaInicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaFinal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoriaOrigen)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ph)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TiempoCorrida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Flujo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Temperatura)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PresionIni)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PresionFin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlatosIni)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlatosFin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comportamiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comentario)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lote.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Columnas.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
