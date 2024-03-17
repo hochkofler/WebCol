@@ -22,10 +22,10 @@ namespace WebCol.Controllers
         // GET: Productos
         public async Task<IActionResult> Index()
         {
-            var productos = _context.Productos
+            var productos = await _context.Productos
                 .Include(p => p.ProductosPrincipios)
                     .ThenInclude(pp => pp.Principio)
-                .ToList();
+                .ToListAsync();
 
             return View(productos);
         }

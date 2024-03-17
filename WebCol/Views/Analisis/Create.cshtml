@@ -1,70 +1,120 @@
-﻿@model WebCol.Models.Analisis
-
+﻿@model WebCol.Models.ViewModels.AnalisisViewModel
 @{
-    ViewData["Title"] = "Agregar Analisis";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Crear Análisis";
 }
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>Analisis</h4>
+<hr />
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @Html.HiddenFor(model => model.LoteId)
-            <div class="form-group">
-                <label asp-for="PrincipiosActivos" class="control-label"></label>
-                <br />
-                <select asp-for="PrincipiosActivos" class="form-control" asp-items="ViewBag.Principios">
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="ColumnaId" class="control-label"></label>
-                <input asp-for="ColumnaId" class="form-control" />
-                <span asp-validation-for="ColumnaId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ph" class="control-label"></label>
-                <input asp-for="Ph" class="form-control" />
-                <span asp-validation-for="Ph" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TiempoCorrida" class="control-label"></label>
-                <input asp-for="TiempoCorrida" class="form-control" />
-                <span asp-validation-for="TiempoCorrida" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Flujo" class="control-label"></label>
-                <input asp-for="Flujo" class="form-control" />
-                <span asp-validation-for="Flujo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Temperatura" class="control-label"></label>
-                <input asp-for="Temperatura" class="form-control" />
-                <span asp-validation-for="Temperatura" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PresionIni" class="control-label"></label>
-                <input asp-for="PresionIni" class="form-control" />
-                <span asp-validation-for="PresionIni" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PresionFin" class="control-label"></label>
-                <input asp-for="PresionFin" class="form-control" />
-                <span asp-validation-for="PresionFin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Comentario" class="control-label"></label>
-                <input asp-for="Comentario" class="form-control" />
-                <span asp-validation-for="Comentario" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        @if (Model.Columnas == null)
+        {
+            <form asp-action="Create" method="get">
+                <div class="form-group">
+                    <label asp-for="Analisis.LoteId" class="control-label"></label>
+                    @if (Model.Lote == null)
+                    {
+                        <select name="id" class="form-control" asp-items="ViewBag.lotes"></select>
+                        <button class="btn btn-outline-secondary" type="submit" asp-action="Create" >Continuar</button>
+                    }
+                    else
+                    {
+                        <select name="id" class="form-control" asp-items="ViewBag.lotes" disabled></select>
+                    }
+
+                    @if (Model.Principios != null)
+                    {
+                        <div class="form-group">
+                            <label asp-for="Analisis.PrincipiosActivosId" class="control-label"></label>
+                            <select name= "principios" class="form-control" asp-items="ViewBag.principios" multiple></select>
+
+                            <button class="btn btn-outline-secondary" type="submit" asp-action="Create" asp-route-id=@Model.Lote.Id>Continuar</button>
+                        </div>
+                    }
+                </div>
+
+            </form>
+        } 
+        else 
+        {
+            <form asp-action="Create" method="post">
+                <div class="form-group">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @Html.HiddenFor(model => model.Analisis.LoteId)
+                    @Html.HiddenFor(model => model.Analisis.PrincipiosActivosId)
+                    <div class="form-group">
+                        <label asp-for="Analisis.ColumnaId" class="control-label"></label>
+                        <select name="Analisis.ColumnaId" class="form-control" asp-items="ViewBag.columnas"></select>
+                        <span asp-validation-for="Analisis.ColumnaId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.Ph" class="control-label"></label>
+                        <input asp-for="Analisis.Ph" class="form-control" />
+                        <span asp-validation-for="Analisis.Ph" class="text-danger"></span>
+                    </div
+
+                    <div class="form-group">
+                        <label asp-for="Analisis.TiempoCorrida" class="control-label"></label>
+                        <input asp-for="Analisis.TiempoCorrida" class="form-control" />
+                        <span asp-validation-for="Analisis.TiempoCorrida" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.Flujo" class="control-label"></label>
+                        <input asp-for="Analisis.Flujo" class="form-control" />
+                        <span asp-validation-for="Analisis.Flujo" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.Temperatura" class="control-label"></label>
+                        <input asp-for="Analisis.Temperatura" class="form-control" />
+                        <span asp-validation-for="Analisis.Temperatura" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.PresionIni" class="control-label"></label>
+                        <input asp-for="Analisis.PresionIni" class="form-control" />
+                        <span asp-validation-for="Analisis.PresionIni" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.PresionFin" class="control-label"></label>
+                        <input asp-for="Analisis.PresionFin" class="form-control" />
+                        <span asp-validation-for="Analisis.PresionFin" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.PlatosIni" class="control-label"></label>
+                        <input asp-for="Analisis.PlatosIni" class="form-control" />
+                        <span asp-validation-for="Analisis.PlatosIni" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.PlatosFin" class="control-label"></label>
+                        <input asp-for="Analisis.PlatosFin" class="form-control" />
+                        <span asp-validation-for="Analisis.PlatosFin" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.Comportamiento" class="control-label"></label>
+                        <input asp-for="Analisis.Comportamiento" class="form-control" />
+                        <span asp-validation-for="Analisis.Comportamiento" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Analisis.Comentario" class="control-label"></label>
+                        <input asp-for="Analisis.Comentario" class="form-control" />
+                        <span asp-validation-for="Analisis.Comentario" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+
+                    
+                </div>
+
+            </form>
+        }
+
     </div>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

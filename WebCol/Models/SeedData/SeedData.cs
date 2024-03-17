@@ -108,52 +108,42 @@ public static class SeedData
 
         return fasesMovilesSeedData;
     }
-    //public static List<ProductoPrincipio> GenerateProductoPrincipioSeedData(List<Producto> ProductosSeedData, List<Principio> PrincipiosSeedData)
-    //{
-    //    List<ProductoPrincipio> seedData = new List<ProductoPrincipio>();
-        
-    //    Random rnd = new Random();
-    //    int numProd = rnd.Next(1, 8);
-    //    List<Producto> productos = new List<Producto>();
-    //    for (int i = 0; i < numProd; i++)
-    //    {
-    //        productos.Add(ProductosSeedData[rnd.Next(ProductosSeedData.Count)]);
-    //    }
 
-        
-    //    List<Principio> principios = new List<Principio>();
-    //    int numPrinc = rnd.Next(1, 5);
-    //    for (int j = 0; j < numPrinc; j++)
-    //    {
-    //        principios.Add(PrincipiosSeedData[rnd.Next(PrincipiosSeedData.Count)]);
-    //    }   return principios;
+    public static void GenerateAsignacionColumnaSeedData(ApplicationDbContext context)
+    {
+        var random = new Random();
+        var productosPrincipios = context.ProductosPrincipios.ToList();
+        var columnas = context.Columnas.ToList();
 
-    //    ProductoPrincipio productosPrincipios = new ProductoPrincipio
-    //    {
-    //        ProductoId = productos,
-    //        PrincipioId = principios
-    //    };
-    //    // Obtener una lista de IDs de Productos y Principios disponibles
+        foreach (var productoPrincipio in productosPrincipios)
+        {
+            var numColumnas = random.Next(1, 4);
+            var usedColumnas = new HashSet<int>();
 
-    //    var productoIds = context.Productos.Select(p => p.Id).ToList();
-    //    var principioIds = context.Principios.Select(p => p.Id).ToList();
-    //    // Sembrar 10 datos aleatorios en ProductosPrincipios
-        
-    //    for (int i = 0; i < 10; i++)
-    //    {
-    //        // Seleccionar aleatoriamente un Producto y un Principio
-    //        int productoId = productoIds[random.Next(0, productoIds.Count)];
-    //        int principioId = principioIds[random.Next(0, principioIds.Count)];
-    //        // Crear una nueva entrada en ProductoPrincipio
-    //        ProductoPrincipio productosPrincipios = new ProductoPrincipio
-    //        {
-    //            ProductoId = productoId,
-    //            PrincipioId = principioId
-    //        };
-    //        // Agregar la nueva entrada a la base de datos
-    //        context.ProductosPrincipios.AddRange(productosPrincipios);
-    //    }
-    //}
+            for (int i = 0; i < numColumnas; i++)
+            {
+                var columnaIndex = random.Next(columnas.Count);
+                while (usedColumnas.Contains(columnaIndex))
+                {
+                    columnaIndex = random.Next(columnas.Count);
+                }
+
+                usedColumnas.Add(columnaIndex);
+                var columna = columnas[columnaIndex];
+
+                var asignacionColumna = new AsignacionColumna
+                {
+                    ProductoId = productoPrincipio.ProductoId,
+                    PrincipioId = productoPrincipio.PrincipioId,
+                    ColumnaId = columna.Id,
+                    Columna = columna
+                };
+
+                context.AsignacionesColumnas.Add(asignacionColumna);
+            }
+        }
+        context.SaveChanges();
+    }
 
     public static void Initialize(IServiceProvider serviceProvider)
     {
@@ -269,6 +259,11 @@ public static class SeedData
             if (!context.ProductosPrincipios.Any())
             {
                 GenerateProductoPrincipioSeedData(context);
+            }
+
+            if (!context.AsignacionesColumnas.Any())
+            {
+                GenerateAsignacionColumnaSeedData(context);
             }
 
         }

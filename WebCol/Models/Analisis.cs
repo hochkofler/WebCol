@@ -26,6 +26,7 @@ namespace WebCol.Models
 
         public string LoteId { get; set; }
 
+        public List<int> PrincipiosActivosId { get; set; }
         public List<Principio>? PrincipiosActivos { get; set; }
 
         [Display(Name = "pH")]
