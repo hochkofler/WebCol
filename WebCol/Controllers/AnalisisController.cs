@@ -173,36 +173,36 @@ namespace WebCol.Controllers
         "LoteId,PrincipiosIds,Ph,TiempoCorrida,Flujo,Temperatura," +
         "PresionIni,PresionFin,PlatosIni,PlatosFin,Comportamiento,Comentario,")] Analisis analisis)
         {
-            if (ModelState.IsValid)
+            // Buscar los ProductoPrincipio correspondientes a los IDs 
+            var lote = await _context.Lotes.FindAsync(analisis.LoteId);
+            if (lote == null)
             {
-                // Buscar los ProductoPrincipio correspondientes a los IDs 
-                var lote = await _context.Lotes.FindAsync(analisis.LoteId);
-                if (lote == null)
-                {
-                    ViewBag.Error = "El lote no existe";
-                    return Content("<h1>El lote no existe</h1>", "text/html");
-                }
+                ViewBag.Error = "El lote no existe";
+                return Content("<h1>El lote no existe</h1>", "text/html");
+            }
 
-                if (analisis.PrincipiosIds != null && analisis.PrincipiosIds.Count > 0 && lote != null)
-                {
-                    analisis.ProductoPrincipios = new List<ProductoPrincipio>();
+            if (analisis.PrincipiosIds != null && analisis.PrincipiosIds.Count > 0 && lote != null)
+            {
+                analisis.ProductoPrincipios = new List<ProductoPrincipio>();
 
-                    foreach (var principio in analisis.PrincipiosIds)
+                foreach (var principio in analisis.PrincipiosIds)
+                {
+                    var productoPrincipio = await _context.ProductosPrincipios
+                        .FirstOrDefaultAsync(pp => pp.ProductoId == lote.ProductoId && pp.PrincipioId == principio);
+                    if (productoPrincipio != null)
                     {
-                        var productoPrincipio = await _context.ProductosPrincipios
-                            .FirstOrDefaultAsync(pp => pp.ProductoId == lote.ProductoId && pp.PrincipioId == principio);
-                        if (productoPrincipio != null)
-                        {
-                            analisis.ProductoPrincipios.Add(productoPrincipio);
-                        }
-                        // devuelve error si no se encuentra el productoPrincipio
-                        else
-                        {
-                            ViewBag.Error = "No se encontró el productoPrincipio";
-                            return Content(ViewBag.Error, "text/html");
-                        }
+                        analisis.ProductoPrincipios.Add(productoPrincipio);
+                    }
+                    // devuelve error si no se encuentra el productoPrincipio
+                    else
+                    {
+                        ViewBag.Error = "No se encontró el productoPrincipio";
+                        return Content(ViewBag.Error, "text/html");
                     }
                 }
+            }
+            if (ModelState.IsValid)
+            { 
                 _context.Add(analisis);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

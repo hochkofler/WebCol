@@ -63,7 +63,7 @@ public static class SeedData
 
         foreach (var producto in productos)
         {
-            var numPrincipios = random.Next(1, 6);
+            var numPrincipios = random.Next(1, 3);
             var usedPrincipios = new HashSet<int>();
 
             for (int i = 0; i < numPrincipios; i++)
