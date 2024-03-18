@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 using WebCol.Data;
 using WebCol.Models;
 using WebCol.Models.ViewModels;
@@ -23,7 +25,9 @@ namespace WebCol.Controllers
         // GET: Analisis
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Analisis.Include(a => a.Columnas).Include(a => a.Lote);
+
+            var applicationDbContext = _context.Analisis.Include(a => a.Columnas).Include(a => a.Lote)
+                .Include(a => a.ProductoPrincipios).ThenInclude(a => a.Principio);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -101,35 +105,46 @@ namespace WebCol.Controllers
                 LoteId = id
             };
 
-            // Validar que todos los principios estén en el productoPrincipiosValidos
-
-            if (principios.Count > 0)
+            // Si se proporcionaron principios, configurar los ProductoPrincipios en el análisis
+            if (principios != null && principios.Count > 0)
             {
+                viewModel.Analisis.ProductoPrincipios = new List<ProductoPrincipio>();
+
                 foreach (var principio in principios)
                 {
-                    if (!viewModel.Principios.Any(pp => pp.Id == principio))
+                    var productoPrincipio = await _context.ProductosPrincipios
+                        .FirstOrDefaultAsync(pp => pp.ProductoId == viewModel.Lote.ProductoId && pp.PrincipioId == principio);
+                    if (productoPrincipio != null)
                     {
-                        ViewBag.Error = "El/los principio(s) no pertenece al producto";
+                        viewModel.Analisis.ProductoPrincipios.Add(productoPrincipio);
+                    }
+                    // devuelve error si no se encuentra el productoPrincipio
+                    else
+                    {
+                        ViewBag.Error = "No se encontró el productoPrincipio";
                         return Content(ViewBag.Error, "text/html");
                     }
                 }
-                viewModel.Analisis.PrincipiosActivosId = principios;
             }
 
             if (viewModel.Principios.Count == 1)
             {
-                viewModel.Analisis.PrincipiosActivosId = new List<int> { viewModel.Principios.First().Id };
+                viewModel.Analisis.ProductoPrincipios =
+                [
+                    new ProductoPrincipio
+                    {
+                        ProductoId = viewModel.Lote.ProductoId,
+                        PrincipioId = viewModel.Principios[0].Id
+                    },
+                ];
             }
 
             // Buscar las columnas correspondientes a los principios
-            var productosPrincipios = await _context.ProductosPrincipios
-                .Where(pp => pp.ProductoId == lote.ProductoId && viewModel.Analisis.PrincipiosActivosId.Contains(pp.PrincipioId))
-                .ToListAsync();
 
             var asignacionesColumnas = await _context.AsignacionesColumnas.ToListAsync();
 
             var asignacionesFiltradas = asignacionesColumnas
-                .Where(ac => productosPrincipios.Any(pp => pp.ProductoId == ac.ProductoId && pp.PrincipioId == ac.PrincipioId))
+                .Where(ac => viewModel.Analisis.ProductoPrincipios.Any(pp => pp.ProductoId == ac.ProductoId && pp.PrincipioId == ac.PrincipioId))
                 .ToList();
 
             // Si no hay columnas, devolver un error
@@ -155,14 +170,41 @@ namespace WebCol.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ColumnaId,FechaInicio,FechaFinal,CategoriaOrigen," +
-            "LoteId,PrincipiosActivosId,Ph,TiempoCorrida,Flujo,Temperatura," +
-            "PresionIni,PresionFin,PlatosIni,PlatosFin,Comportamiento,Comentario,")] Analisis analisis)
+        "LoteId,PrincipiosIds,Ph,TiempoCorrida,Flujo,Temperatura," +
+        "PresionIni,PresionFin,PlatosIni,PlatosFin,Comportamiento,Comentario,")] Analisis analisis)
         {
-
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
+                // Buscar los ProductoPrincipio correspondientes a los IDs 
+                var lote = await _context.Lotes.FindAsync(analisis.LoteId);
+                if (lote == null)
+                {
+                    ViewBag.Error = "El lote no existe";
+                    return Content("<h1>El lote no existe</h1>", "text/html");
+                }
+
+                if (analisis.PrincipiosIds != null && analisis.PrincipiosIds.Count > 0 && lote != null)
+                {
+                    analisis.ProductoPrincipios = new List<ProductoPrincipio>();
+
+                    foreach (var principio in analisis.PrincipiosIds)
+                    {
+                        var productoPrincipio = await _context.ProductosPrincipios
+                            .FirstOrDefaultAsync(pp => pp.ProductoId == lote.ProductoId && pp.PrincipioId == principio);
+                        if (productoPrincipio != null)
+                        {
+                            analisis.ProductoPrincipios.Add(productoPrincipio);
+                        }
+                        // devuelve error si no se encuentra el productoPrincipio
+                        else
+                        {
+                            ViewBag.Error = "No se encontró el productoPrincipio";
+                            return Content(ViewBag.Error, "text/html");
+                        }
+                    }
+                }
                 _context.Add(analisis);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 

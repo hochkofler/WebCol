@@ -28,7 +28,7 @@
                     @if (Model.Principios != null)
                     {
                         <div class="form-group">
-                            <label asp-for="Analisis.PrincipiosActivosId" class="control-label"></label>
+                            <label asp-for="Analisis.ProductoPrincipios" class="control-label"></label>
                             <select name= "principios" class="form-control" asp-items="ViewBag.principios" multiple></select>
 
                             <button class="btn btn-outline-secondary" type="submit" asp-action="Create" asp-route-id=@Model.Lote.Id>Continuar</button>
@@ -46,13 +46,13 @@
                     
                     <input type="hidden" name="Analisis.LoteId" value="@Model.Analisis.LoteId" />
 
-                        @if (Model.Analisis.PrincipiosActivosId != null)
+                    @if (Model.Analisis.ProductoPrincipios != null)
+                    {
+                        foreach (var productoPrincipio in Model.Analisis.ProductoPrincipios)
                         {
-                            foreach (var id in Model.Analisis.PrincipiosActivosId)
-                            {
-                                <input type="hidden" name="Analisis.PrincipiosActivosId" value="@id" />
-                            }
+                            <input type="hidden" name="Analisis.PrincipiosIds" value="@productoPrincipio.PrincipioId" />
                         }
+                    }
 
                     <div class="form-group">
                         <label asp-for="Analisis.ColumnaId" class="control-label"></label>

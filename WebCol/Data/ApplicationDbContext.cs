@@ -20,6 +20,7 @@ namespace WebCol.Data
         public DbSet<FaseMovil> FasesMoviles { get; set; }
         public DbSet<Lote> Lotes { get; set; }
         public DbSet<Modelo> Modelos { get; set; }
+        public DbSet<AnalisisProductoPrincipio> AnalisisProductoPrincipios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +49,20 @@ namespace WebCol.Data
                 .HasOne(ac => ac.Columna)
                 .WithMany()
                 .HasForeignKey(ac => ac.ColumnaId);
+
+            modelBuilder.Entity<AnalisisProductoPrincipio>()
+                .HasKey(app => new { app.AnalisisId, app.ProductoId, app.PrincipioId });
+
+            modelBuilder.Entity<AnalisisProductoPrincipio>()
+                .HasOne(app => app.Analisis)
+                .WithMany(a => a.AnalisisProductoPrincipios)
+                .HasForeignKey(app => app.AnalisisId);
+
+            modelBuilder.Entity<AnalisisProductoPrincipio>()
+                .HasOne(app => app.ProductoPrincipio)
+                .WithMany(pp => pp.Analisis)
+                .HasForeignKey(app => new { app.ProductoId, app.PrincipioId })
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace WebCol.Models
         public int PrincipioId { get; set; }
         public virtual Producto Producto { get; set; }
         public virtual Principio Principio { get; set; }
+        public List<AnalisisProductoPrincipio> Analisis { get; set; }
 
     }
 }

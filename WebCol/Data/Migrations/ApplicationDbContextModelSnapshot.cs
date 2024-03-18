@@ -87,7 +87,7 @@ namespace WebCol.Data.Migrations
                     b.Property<decimal>("PresionIni")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("PrincipiosActivosId")
+                    b.Property<string>("PrincipiosIds")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -104,6 +104,24 @@ namespace WebCol.Data.Migrations
                     b.HasIndex("LoteId");
 
                     b.ToTable("Analisis");
+                });
+
+            modelBuilder.Entity("WebCol.Models.AnalisisProductoPrincipio", b =>
+                {
+                    b.Property<int>("AnalisisId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrincipioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AnalisisId", "ProductoId", "PrincipioId");
+
+                    b.HasIndex("ProductoId", "PrincipioId");
+
+                    b.ToTable("AnalisisProductoPrincipios");
                 });
 
             modelBuilder.Entity("WebCol.Models.AsignacionColumna", b =>
@@ -249,9 +267,6 @@ namespace WebCol.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnalisisId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -260,8 +275,6 @@ namespace WebCol.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AnalisisId");
 
                     b.HasIndex("ProductoId");
 
@@ -301,7 +314,12 @@ namespace WebCol.Data.Migrations
                     b.Property<int>("PrincipioId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AnalisisId")
+                        .HasColumnType("int");
+
                     b.HasKey("ProductoId", "PrincipioId");
+
+                    b.HasIndex("AnalisisId");
 
                     b.HasIndex("PrincipioId");
 
@@ -359,6 +377,25 @@ namespace WebCol.Data.Migrations
                     b.Navigation("Lote");
                 });
 
+            modelBuilder.Entity("WebCol.Models.AnalisisProductoPrincipio", b =>
+                {
+                    b.HasOne("WebCol.Models.Analisis", "Analisis")
+                        .WithMany("AnalisisProductoPrincipios")
+                        .HasForeignKey("AnalisisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebCol.Models.ProductoPrincipio", "ProductoPrincipio")
+                        .WithMany("Analisis")
+                        .HasForeignKey("ProductoId", "PrincipioId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Analisis");
+
+                    b.Navigation("ProductoPrincipio");
+                });
+
             modelBuilder.Entity("WebCol.Models.AsignacionColumna", b =>
                 {
                     b.HasOne("WebCol.Models.Columna", "Columna")
@@ -413,10 +450,6 @@ namespace WebCol.Data.Migrations
 
             modelBuilder.Entity("WebCol.Models.Principio", b =>
                 {
-                    b.HasOne("WebCol.Models.Analisis", null)
-                        .WithMany("PrincipiosActivos")
-                        .HasForeignKey("AnalisisId");
-
                     b.HasOne("WebCol.Models.Producto", null)
                         .WithMany("Principios")
                         .HasForeignKey("ProductoId");
@@ -424,6 +457,10 @@ namespace WebCol.Data.Migrations
 
             modelBuilder.Entity("WebCol.Models.ProductoPrincipio", b =>
                 {
+                    b.HasOne("WebCol.Models.Analisis", null)
+                        .WithMany("ProductoPrincipios")
+                        .HasForeignKey("AnalisisId");
+
                     b.HasOne("WebCol.Models.Principio", "Principio")
                         .WithMany("ProductosPrincipios")
                         .HasForeignKey("PrincipioId")
@@ -443,7 +480,9 @@ namespace WebCol.Data.Migrations
 
             modelBuilder.Entity("WebCol.Models.Analisis", b =>
                 {
-                    b.Navigation("PrincipiosActivos");
+                    b.Navigation("AnalisisProductoPrincipios");
+
+                    b.Navigation("ProductoPrincipios");
                 });
 
             modelBuilder.Entity("WebCol.Models.Columna", b =>
@@ -468,6 +507,11 @@ namespace WebCol.Data.Migrations
                     b.Navigation("Principios");
 
                     b.Navigation("ProductosPrincipios");
+                });
+
+            modelBuilder.Entity("WebCol.Models.ProductoPrincipio", b =>
+                {
+                    b.Navigation("Analisis");
                 });
 
             modelBuilder.Entity("WebCol.Models.Proveedor", b =>
