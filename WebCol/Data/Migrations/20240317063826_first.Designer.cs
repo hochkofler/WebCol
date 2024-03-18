@@ -12,7 +12,7 @@ using WebCol.Data;
 namespace WebCol.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240315213028_first")]
+    [Migration("20240317063826_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -89,6 +89,10 @@ namespace WebCol.Data.Migrations
 
                     b.Property<decimal>("PresionIni")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PrincipiosActivosId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Temperatura")
                         .HasColumnType("decimal(18,2)");

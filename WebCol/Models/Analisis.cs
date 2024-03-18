@@ -12,9 +12,10 @@ namespace WebCol.Models
 
         [DataType(DataType.Date)]
         [DateNoFuture]
-        [Comparison(nameof(FechaFinal), ComparisonType.GreaterThanOrEqualTo)]
+        [Comparison(nameof(FechaFinal), ComparisonType.LessThanOrEqualTo)]
         [Display(Name = "Fecha inicio")]
         public DateTime FechaInicio { get; set; }
+
 
         [DataType(DataType.Date)]
         [DateNoFuture]
@@ -59,7 +60,7 @@ namespace WebCol.Models
 
         public string? Comentario { get; set; }
 
-        public Lote Lote { get; set; }
+        public Lote? Lote { get; set; }
 
         public Columna? Columnas { get; set; }
     }

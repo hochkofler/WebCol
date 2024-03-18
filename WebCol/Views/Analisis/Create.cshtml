@@ -43,12 +43,31 @@
             <form asp-action="Create" method="post">
                 <div class="form-group">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    @Html.HiddenFor(model => model.Analisis.LoteId)
-                    @Html.HiddenFor(model => model.Analisis.PrincipiosActivosId)
+                    
+                    <input type="hidden" name="Analisis.LoteId" value="@Model.Analisis.LoteId" />
+
+                        @if (Model.Analisis.PrincipiosActivosId != null)
+                        {
+                            foreach (var id in Model.Analisis.PrincipiosActivosId)
+                            {
+                                <input type="hidden" name="Analisis.PrincipiosActivosId" value="@id" />
+                            }
+                        }
+
                     <div class="form-group">
                         <label asp-for="Analisis.ColumnaId" class="control-label"></label>
                         <select name="Analisis.ColumnaId" class="form-control" asp-items="ViewBag.columnas"></select>
                         <span asp-validation-for="Analisis.ColumnaId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.FechaInicio" class="control-label"></label>
+                        <input asp-for="Analisis.FechaInicio" class="form-control" />
+                        <span asp-validation-for="Analisis.FechaInicio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Analisis.FechaFinal" class="control-label"></label>
+                        <input asp-for="Analisis.FechaFinal" class="form-control" />
+                        <span asp-validation-for="Analisis.FechaFinal" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Analisis.Ph" class="control-label"></label>

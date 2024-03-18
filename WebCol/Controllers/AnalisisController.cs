@@ -50,57 +50,80 @@ namespace WebCol.Controllers
         public async Task<IActionResult> Create(string? id, List<int>? principios)
         {
             var viewModel = new AnalisisViewModel();
+
+            // Configurar SelectList para los lotes
             ViewBag.lotes = new SelectList(_context.Lotes, "Id", "Id");
 
+            // Si no se proporcionó un ID, simplemente devolver la vista con el modelo vacío
             if (id == null)
             {
                 return View(viewModel);
             }
 
+            // Buscar el lote correspondiente
             var lote = await _context.Lotes.FindAsync(id);
-            if(lote == null)
+            if (lote == null)
             {
                 ViewBag.Error = "El lote no existe";
                 return Content("<h1>El lote no existe</h1>", "text/html");
-                //return View(viewModel);
             }
 
+            // Configurar el lote en el modelo
             viewModel.Lote = lote;
-            
+
+            // Buscar los principios correspondientes al lote
             viewModel.Principios = await _context.ProductosPrincipios.Include(pp => pp.Principio)
                                         .Where(pp => pp.ProductoId == lote.ProductoId)
                                         .Select(pp => pp.Principio).ToListAsync();
 
+            // Si no hay principios, devolver un error
             if (viewModel.Principios.Count == 0)
             {
                 ViewBag.Error = "El lote no tiene principios asociados";
                 return Content(ViewBag.Error, "text/html");
-                //return View(viewModel);
             }
-            ViewBag.lotes = new SelectList(_context.Lotes, "Id", "Id", id);
+
+            // Configurar SelectList para los principios
             ViewBag.principios = new MultiSelectList(viewModel.Principios, "Id", "Nombre");
 
-            if (principios.Count == 0)
+            // Si no se proporcionaron principios, simplemente devolver la vista con el modelo
+
+            if (principios.Count == 0 && viewModel.Principios.Count != 1)
             {
                 return View(viewModel);
             }
 
+            // Configurar el análisis en el modelo
+            viewModel.Analisis = new Analisis
+            {
+                FechaInicio = DateTime.Now,
+                FechaFinal = DateTime.Now,
+                LoteId = id
+            };
+
             // Validar que todos los principios estén en el productoPrincipiosValidos
 
-            foreach (var principio in principios)
+            if (principios.Count > 0)
             {
-                if(!viewModel.Principios.Any(pp => pp.Id == principio))
+                foreach (var principio in principios)
                 {
-                    ViewBag.Error = "El/los principio(s) no pertenece al producto";
-                    return NotFound();
+                    if (!viewModel.Principios.Any(pp => pp.Id == principio))
+                    {
+                        ViewBag.Error = "El/los principio(s) no pertenece al producto";
+                        return Content(ViewBag.Error, "text/html");
+                    }
                 }
+                viewModel.Analisis.PrincipiosActivosId = principios;
             }
 
-            var productoId = lote.ProductoId; // Obtén el ProductoId del lote
-            var principiosIds = principios; // Obtén la lista de PrincipiosIds
+            if (viewModel.Principios.Count == 1)
+            {
+                viewModel.Analisis.PrincipiosActivosId = new List<int> { viewModel.Principios.First().Id };
+            }
 
+            // Buscar las columnas correspondientes a los principios
             var productosPrincipios = await _context.ProductosPrincipios
-                .Where(pp => pp.ProductoId == productoId && principiosIds.Contains(pp.PrincipioId))
+                .Where(pp => pp.ProductoId == lote.ProductoId && viewModel.Analisis.PrincipiosActivosId.Contains(pp.PrincipioId))
                 .ToListAsync();
 
             var asignacionesColumnas = await _context.AsignacionesColumnas.ToListAsync();
@@ -109,24 +132,21 @@ namespace WebCol.Controllers
                 .Where(ac => productosPrincipios.Any(pp => pp.ProductoId == ac.ProductoId && pp.PrincipioId == ac.PrincipioId))
                 .ToList();
 
+            // Si no hay columnas, devolver un error
             if (asignacionesFiltradas.Count == 0)
             {
                 ViewBag.Error = "No hay columnas disponibles para los principios seleccionados";
                 return Content(ViewBag.Error, "text/html");
             }
 
+            // Configurar las columnas en el modelo
             viewModel.Columnas = asignacionesFiltradas.Select(ac => ac.Columna).ToList();
 
-            if (viewModel.Columnas.Count == 0)
-            {
-                ViewBag.Error = "No hay columnas disponibles para los principios seleccionados2";
-                return Content(ViewBag.Error, "text/html");
-            }
-
+            // Configurar SelectList para las columnas
             ViewBag.columnas = new SelectList(asignacionesFiltradas, "ColumnaId", "ColumnaId");
-            
-            return View(viewModel);
 
+            // Devolver la vista con el modelo
+            return View(viewModel);
         }
 
         // POST: Analisis/Create
@@ -134,44 +154,23 @@ namespace WebCol.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ColumnaId,FechaInicio,FechaFinal,CategoriaOrigen,LoteId,PrincipiosActivosId,Ph,TiempoCorrida,Flujo,Temperatura,PresionIni,PresionFin,PlatosIni,PlatosFin,Comportamiento,Comentario")] Analisis analisis)
+        public async Task<IActionResult> Create([Bind("Id,ColumnaId,FechaInicio,FechaFinal,CategoriaOrigen," +
+            "LoteId,PrincipiosActivosId,Ph,TiempoCorrida,Flujo,Temperatura," +
+            "PresionIni,PresionFin,PlatosIni,PlatosFin,Comportamiento,Comentario,")] Analisis analisis)
         {
 
-
-            var analisis1 = new Analisis
-            {
-                Ph = analisis.Ph,
-                TiempoCorrida = analisis.TiempoCorrida,
-                Flujo = analisis.Flujo,
-                Temperatura = analisis.Temperatura,
-                PresionIni = analisis.PresionIni,
-                PresionFin = analisis.PresionFin,
-                Comentario = analisis.Comentario,
-                LoteId = analisis.LoteId,
-                ColumnaId = analisis.ColumnaId,
-                PrincipiosActivosId = analisis.PrincipiosActivosId
-            };
-
-            _context.Add(analisis1);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 _context.Add(analisis);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ColumnaId"] = new SelectList(_context.Set<Columna>(), "Id", "Id", analisis.ColumnaId);
-            ViewData["LoteId"] = new SelectList(_context.Set<Lote>(), "Id", "Id", analisis.LoteId);
 
-            // Crear un nuevo AnalisisViewModel y asignarle los valores de 'analisis'
-            var viewModel = new AnalisisViewModel
-            {
-                Analisis = analisis,
-                // Asegúrate de asignar todas las propiedades necesarias
-            };
-
+            ViewBag.lotes = new SelectList(_context.Lotes, "Id", "Id", analisis.LoteId);
+            ViewBag.columnas = new SelectList(_context.Columnas, "Id", "Id", analisis.ColumnaId);
+            var viewModel = new AnalisisViewModel();
+            viewModel.Analisis = analisis;
+            viewModel.Columnas = await _context.Columnas.ToListAsync();
             return View(viewModel);
         }
 
@@ -192,7 +191,9 @@ namespace WebCol.Controllers
             }
             ViewData["ColumnaId"] = new SelectList(_context.Set<Columna>(), "Id", "Id", analisis.ColumnaId);
             ViewData["LoteId"] = new SelectList(_context.Set<Lote>(), "Id", "Id", analisis.LoteId);
-            return View(analisis);
+            AnalisisViewModel viewModel = new AnalisisViewModel();
+            viewModel.Analisis = analisis;
+            return View(viewModel);
         }
 
         // POST: Analisis/Edit/5

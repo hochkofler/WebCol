@@ -87,6 +87,10 @@ namespace WebCol.Data.Migrations
                     b.Property<decimal>("PresionIni")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("PrincipiosActivosId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Temperatura")
                         .HasColumnType("decimal(18,2)");
 

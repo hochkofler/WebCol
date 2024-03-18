@@ -131,6 +131,7 @@ namespace WebCol.Data.Migrations
                     FechaFinal = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CategoriaOrigen = table.Column<int>(type: "int", nullable: false),
                     LoteId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PrincipiosActivosId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Ph = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TiempoCorrida = table.Column<TimeOnly>(type: "time", nullable: false),
                     Flujo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
