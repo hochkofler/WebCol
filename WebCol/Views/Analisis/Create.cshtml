@@ -29,7 +29,13 @@
                     {
                         <div class="form-group">
                             <label asp-for="Analisis.ProductoPrincipios" class="control-label"></label>
-                            <select name= "principios" class="form-control" asp-items="ViewBag.principios" multiple></select>
+                            <br />
+                            @foreach (var principio in ViewBag.principios)
+                            {
+                                <input type="checkbox" name="principios" value="@principio.Value" /> @principio.Text
+                                <br />
+                            }
+
 
                             <button class="btn btn-outline-secondary" type="submit" asp-action="Create" asp-route-id=@Model.Lote.Id>Continuar</button>
                         </div>
@@ -43,8 +49,9 @@
             <form asp-action="Create" method="post">
                 <div class="form-group">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    
+                    <h2>@ViewBag.producto.Nombre</h2>
                     <input type="hidden" name="Analisis.LoteId" value="@Model.Analisis.LoteId" />
+                    
 
                     @if (Model.Analisis.ProductoPrincipios != null)
                     {
@@ -53,6 +60,17 @@
                             <input type="hidden" name="Analisis.PrincipiosIds" value="@productoPrincipio.PrincipioId" />
                         }
                     }
+                    
+                    <select name="id" class="form-control" asp-items="ViewBag.lotes" disabled></select>
+                    @foreach (var principio in ViewBag.principios)
+                            {
+                                <input type="checkbox" name="principios" value="@principio.Value" 
+                                   @(Model.Analisis.ProductoPrincipios != null 
+                                   && Model.Analisis.ProductoPrincipios.Any(p => p.PrincipioId == int.Parse(principio.Value)) ? "checked" : "") disabled /> @principio.Text
+                                <br />
+                            }
+
+                    
 
                     <div class="form-group">
                         <label asp-for="Analisis.ColumnaId" class="control-label"></label>

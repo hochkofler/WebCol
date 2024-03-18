@@ -72,8 +72,11 @@ namespace WebCol.Controllers
                 return Content("<h1>El lote no existe</h1>", "text/html");
             }
 
+            ViewBag.lotes = new SelectList(_context.Lotes, "Id", "Id", lote.Id);
+
             // Configurar el lote en el modelo
             viewModel.Lote = lote;
+            ViewBag.producto = _context.Productos.FirstOrDefault(p => p.Id == lote.ProductoId);
 
             // Buscar los principios correspondientes al lote
             viewModel.Principios = await _context.ProductosPrincipios.Include(pp => pp.Principio)
@@ -159,6 +162,8 @@ namespace WebCol.Controllers
 
             // Configurar SelectList para las columnas
             ViewBag.columnas = new SelectList(asignacionesFiltradas, "ColumnaId", "ColumnaId");
+            ViewBag.principios = new MultiSelectList(viewModel.Principios, "Id", "Nombre", viewModel.Analisis.PrincipiosIds);
+
 
             // Devolver la vista con el modelo
             return View(viewModel);
@@ -180,6 +185,8 @@ namespace WebCol.Controllers
                 ViewBag.Error = "El lote no existe";
                 return Content("<h1>El lote no existe</h1>", "text/html");
             }
+
+            ViewBag.producto = _context.Productos.FirstOrDefault(p => p.Id == lote.ProductoId);
 
             if (analisis.PrincipiosIds != null && analisis.PrincipiosIds.Count > 0 && lote != null)
             {
@@ -213,6 +220,8 @@ namespace WebCol.Controllers
             var viewModel = new AnalisisViewModel();
             viewModel.Analisis = analisis;
             viewModel.Columnas = await _context.Columnas.ToListAsync();
+
+
             return View(viewModel);
         }
 
