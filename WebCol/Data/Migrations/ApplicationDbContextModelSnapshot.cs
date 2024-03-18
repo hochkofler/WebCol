@@ -22,6 +22,24 @@ namespace WebCol.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AnalisisProductoPrincipio", b =>
+                {
+                    b.Property<int>("AnalisisId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoPrincipiosProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoPrincipiosPrincipioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AnalisisId", "ProductoPrincipiosProductoId", "ProductoPrincipiosPrincipioId");
+
+                    b.HasIndex("ProductoPrincipiosProductoId", "ProductoPrincipiosPrincipioId");
+
+                    b.ToTable("AnalisisProductoPrincipio");
+                });
+
             modelBuilder.Entity("ColumnaFaseMovil", b =>
                 {
                     b.Property<string>("ColumnasId")
@@ -104,24 +122,6 @@ namespace WebCol.Data.Migrations
                     b.HasIndex("LoteId");
 
                     b.ToTable("Analisis");
-                });
-
-            modelBuilder.Entity("WebCol.Models.AnalisisProductoPrincipio", b =>
-                {
-                    b.Property<int>("AnalisisId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PrincipioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AnalisisId", "ProductoId", "PrincipioId");
-
-                    b.HasIndex("ProductoId", "PrincipioId");
-
-                    b.ToTable("AnalisisProductoPrincipios");
                 });
 
             modelBuilder.Entity("WebCol.Models.AsignacionColumna", b =>
@@ -314,12 +314,7 @@ namespace WebCol.Data.Migrations
                     b.Property<int>("PrincipioId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AnalisisId")
-                        .HasColumnType("int");
-
                     b.HasKey("ProductoId", "PrincipioId");
-
-                    b.HasIndex("AnalisisId");
 
                     b.HasIndex("PrincipioId");
 
@@ -341,6 +336,21 @@ namespace WebCol.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Proveedores");
+                });
+
+            modelBuilder.Entity("AnalisisProductoPrincipio", b =>
+                {
+                    b.HasOne("WebCol.Models.Analisis", null)
+                        .WithMany()
+                        .HasForeignKey("AnalisisId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebCol.Models.ProductoPrincipio", null)
+                        .WithMany()
+                        .HasForeignKey("ProductoPrincipiosProductoId", "ProductoPrincipiosPrincipioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ColumnaFaseMovil", b =>
@@ -375,25 +385,6 @@ namespace WebCol.Data.Migrations
                     b.Navigation("Columnas");
 
                     b.Navigation("Lote");
-                });
-
-            modelBuilder.Entity("WebCol.Models.AnalisisProductoPrincipio", b =>
-                {
-                    b.HasOne("WebCol.Models.Analisis", "Analisis")
-                        .WithMany("AnalisisProductoPrincipios")
-                        .HasForeignKey("AnalisisId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebCol.Models.ProductoPrincipio", "ProductoPrincipio")
-                        .WithMany("Analisis")
-                        .HasForeignKey("ProductoId", "PrincipioId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Analisis");
-
-                    b.Navigation("ProductoPrincipio");
                 });
 
             modelBuilder.Entity("WebCol.Models.AsignacionColumna", b =>
@@ -457,10 +448,6 @@ namespace WebCol.Data.Migrations
 
             modelBuilder.Entity("WebCol.Models.ProductoPrincipio", b =>
                 {
-                    b.HasOne("WebCol.Models.Analisis", null)
-                        .WithMany("ProductoPrincipios")
-                        .HasForeignKey("AnalisisId");
-
                     b.HasOne("WebCol.Models.Principio", "Principio")
                         .WithMany("ProductosPrincipios")
                         .HasForeignKey("PrincipioId")
@@ -476,13 +463,6 @@ namespace WebCol.Data.Migrations
                     b.Navigation("Principio");
 
                     b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("WebCol.Models.Analisis", b =>
-                {
-                    b.Navigation("AnalisisProductoPrincipios");
-
-                    b.Navigation("ProductoPrincipios");
                 });
 
             modelBuilder.Entity("WebCol.Models.Columna", b =>
@@ -507,11 +487,6 @@ namespace WebCol.Data.Migrations
                     b.Navigation("Principios");
 
                     b.Navigation("ProductosPrincipios");
-                });
-
-            modelBuilder.Entity("WebCol.Models.ProductoPrincipio", b =>
-                {
-                    b.Navigation("Analisis");
                 });
 
             modelBuilder.Entity("WebCol.Models.Proveedor", b =>

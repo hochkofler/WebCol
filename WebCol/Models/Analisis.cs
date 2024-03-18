@@ -60,7 +60,7 @@ namespace WebCol.Models
 
         public Lote? Lote { get; set; } 
         public Columna? Columnas { get; set; }
-        public List<AnalisisProductoPrincipio>? AnalisisProductoPrincipios { get; set; }
+        
         public List<int> PrincipiosIds { get; set; }
         public List<ProductoPrincipio>? ProductoPrincipios { get; set; }
     }
