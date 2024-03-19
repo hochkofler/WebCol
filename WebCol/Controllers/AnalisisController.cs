@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -10,6 +12,7 @@ using SQLitePCL;
 using WebCol.Data;
 using WebCol.Models;
 using WebCol.Models.ViewModels;
+using System.Security.Claims;
 
 namespace WebCol.Controllers
 {
@@ -163,6 +166,8 @@ namespace WebCol.Controllers
             // Configurar SelectList para las columnas
             ViewBag.columnas = new SelectList(asignacionesFiltradas, "ColumnaId", "ColumnaId");
             ViewBag.principios = new MultiSelectList(viewModel.Principios, "Id", "Nombre", viewModel.Analisis.PrincipiosIds);
+            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            viewModel.Analisis.Usuario = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
             // Devolver la vista con el modelo
@@ -176,7 +181,7 @@ namespace WebCol.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ColumnaId,FechaInicio,FechaFinal,CategoriaOrigen," +
         "LoteId,PrincipiosIds,Ph,TiempoCorrida,Flujo,Temperatura," +
-        "PresionIni,PresionFin,PlatosIni,PlatosFin,Comportamiento,Comentario,")] Analisis analisis)
+        "PresionIni,PresionFin,PlatosIni,PlatosFin,Comentario,Usuario")] Analisis analisis)
         {
             // Buscar los ProductoPrincipio correspondientes a los IDs 
             var lote = await _context.Lotes.FindAsync(analisis.LoteId);
@@ -209,7 +214,10 @@ namespace WebCol.Controllers
                 }
             }
             if (ModelState.IsValid)
-            { 
+            {
+                //var user = await UserManager.GetUserAsync(User);
+                analisis.Usuario = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
                 _context.Add(analisis);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

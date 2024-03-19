@@ -197,7 +197,8 @@ namespace WebCol.Data.Migrations
                     PlatosIni = table.Column<int>(type: "int", nullable: false),
                     PlatosFin = table.Column<int>(type: "int", nullable: false),
                     Comentario = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PrincipiosIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PrincipiosIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Usuario = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

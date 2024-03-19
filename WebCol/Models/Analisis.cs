@@ -56,8 +56,7 @@ namespace WebCol.Models
         [Display(Name = "Platos final")]
         public int PlatosFin { get; set; }
 
-        [Display(Name = "Comportamiento")]
-
+        [Display(Name = "Comentario")]
         public string? Comentario { get; set; }
 
         public Lote? Lote { get; set; } 
@@ -66,5 +65,8 @@ namespace WebCol.Models
         public List<int> PrincipiosIds { get; set; }
         public List<ProductoPrincipio>? ProductoPrincipios { get; set; }
         public ICollection<Comportamiento> Comportamientos { get; set; } = new List<Comportamiento>();
+        
+        [Display(Name = "Usuario")]
+        public string Usuario { get; set; }
     }
 }

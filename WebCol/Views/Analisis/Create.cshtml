@@ -1,4 +1,5 @@
 ﻿@model WebCol.Models.ViewModels.AnalisisViewModel
+
 @{
     ViewData["Title"] = "Crear Análisis";
 }
@@ -63,14 +64,14 @@
                     
                     <select name="id" class="form-control" asp-items="ViewBag.lotes" disabled></select>
                     @foreach (var principio in ViewBag.principios)
-                            {
-                                <input type="checkbox" name="principios" value="@principio.Value" 
-                                   @(Model.Analisis.ProductoPrincipios != null 
-                                   && Model.Analisis.ProductoPrincipios.Any(p => p.PrincipioId == int.Parse(principio.Value)) ? "checked" : "") disabled /> @principio.Text
-                                <br />
-                            }
+                    {
+                       <input type="checkbox" name="principios" value="@principio.Value" 
+                       @(Model.Analisis.ProductoPrincipios != null 
+                       && Model.Analisis.ProductoPrincipios.Any(p => p.PrincipioId == int.Parse(principio.Value)) ? "checked" : "") disabled /> @principio.Text
+                       <br />
+                    }
 
-                    
+                    <input type="hidden" name="Analisis.Usuario" value="@Model.Analisis.Usuario" />
 
                     <div class="form-group">
                         <label asp-for="Analisis.ColumnaId" class="control-label"></label>

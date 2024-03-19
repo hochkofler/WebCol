@@ -12,7 +12,7 @@ using WebCol.Data;
 namespace WebCol.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240319131436_first")]
+    [Migration("20240319191150_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -333,6 +333,10 @@ namespace WebCol.Data.Migrations
 
                     b.Property<decimal>("TiempoCorrida")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Usuario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

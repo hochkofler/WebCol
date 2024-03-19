@@ -8,7 +8,7 @@ using WebCol.Data;
 
 #nullable disable
 
-namespace Prueba.Data.Migrations
+namespace WebCol.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -330,6 +330,10 @@ namespace Prueba.Data.Migrations
 
                     b.Property<decimal>("TiempoCorrida")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Usuario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
