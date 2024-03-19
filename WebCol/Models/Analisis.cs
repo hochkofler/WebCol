@@ -32,8 +32,11 @@ namespace WebCol.Models
         [Range(0, 14)]
         public decimal Ph { get; set; }
 
-        [Display(Name = "Tiempo de corrida [HH:MM]")]
-        public TimeOnly TiempoCorrida { get; set; }
+        [Display(Name = "Tiempo de corrida [min]")]
+        public decimal TiempoCorrida { get; set; }
+
+        [Display(Name = "Número de inyecciones")]
+        public int Inyecciones { get; set; }
 
         [Display(Name = "Flujo [mL/min]")]
         public decimal Flujo { get; set; }
@@ -54,14 +57,14 @@ namespace WebCol.Models
         public int PlatosFin { get; set; }
 
         [Display(Name = "Comportamiento")]
-        public string Comportamiento { get; set; }
 
         public string? Comentario { get; set; }
 
         public Lote? Lote { get; set; } 
         public Columna? Columnas { get; set; }
-        
+
         public List<int> PrincipiosIds { get; set; }
         public List<ProductoPrincipio>? ProductoPrincipios { get; set; }
+        public ICollection<Comportamiento> Comportamientos { get; set; } = new List<Comportamiento>();
     }
 }

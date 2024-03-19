@@ -12,7 +12,7 @@ using WebCol.Data;
 namespace WebCol.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240318192339_first")]
+    [Migration("20240319131436_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace WebCol.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AnalisisComportamiento", b =>
+                {
+                    b.Property<int>("AnalisisId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ComportamientosId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AnalisisId", "ComportamientosId");
+
+                    b.HasIndex("ComportamientosId");
+
+                    b.ToTable("AnalisisComportamiento");
+                });
 
             modelBuilder.Entity("AnalisisProductoPrincipio", b =>
                 {
@@ -278,10 +293,6 @@ namespace WebCol.Data.Migrations
                     b.Property<string>("Comentario")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Comportamiento")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("FechaFinal")
                         .HasColumnType("datetime2");
 
@@ -290,6 +301,9 @@ namespace WebCol.Data.Migrations
 
                     b.Property<decimal>("Flujo")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Inyecciones")
+                        .HasColumnType("int");
 
                     b.Property<string>("LoteId")
                         .IsRequired()
@@ -317,8 +331,8 @@ namespace WebCol.Data.Migrations
                     b.Property<decimal>("Temperatura")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<TimeOnly>("TiempoCorrida")
-                        .HasColumnType("time");
+                    b.Property<decimal>("TiempoCorrida")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -396,6 +410,23 @@ namespace WebCol.Data.Migrations
                     b.HasIndex("ModeloId");
 
                     b.ToTable("Columnas");
+                });
+
+            modelBuilder.Entity("WebCol.Models.Comportamiento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Comportamientos");
                 });
 
             modelBuilder.Entity("WebCol.Models.FaseMovil", b =>
@@ -541,6 +572,21 @@ namespace WebCol.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Proveedores");
+                });
+
+            modelBuilder.Entity("AnalisisComportamiento", b =>
+                {
+                    b.HasOne("WebCol.Models.Analisis", null)
+                        .WithMany()
+                        .HasForeignKey("AnalisisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebCol.Models.Comportamiento", null)
+                        .WithMany()
+                        .HasForeignKey("ComportamientosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AnalisisProductoPrincipio", b =>

@@ -12,6 +12,19 @@ namespace WebCol.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Comportamientos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comportamientos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FasesMoviles",
                 columns: table => new
                 {
@@ -175,14 +188,14 @@ namespace WebCol.Data.Migrations
                     CategoriaOrigen = table.Column<int>(type: "int", nullable: false),
                     LoteId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Ph = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TiempoCorrida = table.Column<TimeOnly>(type: "time", nullable: false),
+                    TiempoCorrida = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Inyecciones = table.Column<int>(type: "int", nullable: false),
                     Flujo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Temperatura = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PresionIni = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PresionFin = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PlatosIni = table.Column<int>(type: "int", nullable: false),
                     PlatosFin = table.Column<int>(type: "int", nullable: false),
-                    Comportamiento = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comentario = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PrincipiosIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -255,6 +268,30 @@ namespace WebCol.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AnalisisComportamiento",
+                columns: table => new
+                {
+                    AnalisisId = table.Column<int>(type: "int", nullable: false),
+                    ComportamientosId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnalisisComportamiento", x => new { x.AnalisisId, x.ComportamientosId });
+                    table.ForeignKey(
+                        name: "FK_AnalisisComportamiento_Analisis_AnalisisId",
+                        column: x => x.AnalisisId,
+                        principalTable: "Analisis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AnalisisComportamiento_Comportamientos_ComportamientosId",
+                        column: x => x.ComportamientosId,
+                        principalTable: "Comportamientos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AnalisisProductoPrincipio",
                 columns: table => new
                 {
@@ -288,6 +325,11 @@ namespace WebCol.Data.Migrations
                 name: "IX_Analisis_LoteId",
                 table: "Analisis",
                 column: "LoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AnalisisComportamiento_ComportamientosId",
+                table: "AnalisisComportamiento",
+                column: "ComportamientosId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnalisisProductoPrincipio_ProductoPrincipiosProductoId_ProductoPrincipiosPrincipioId",
@@ -339,6 +381,9 @@ namespace WebCol.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AnalisisComportamiento");
+
+            migrationBuilder.DropTable(
                 name: "AnalisisProductoPrincipio");
 
             migrationBuilder.DropTable(
@@ -346,6 +391,9 @@ namespace WebCol.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "ColumnaFaseMovil");
+
+            migrationBuilder.DropTable(
+                name: "Comportamientos");
 
             migrationBuilder.DropTable(
                 name: "Analisis");

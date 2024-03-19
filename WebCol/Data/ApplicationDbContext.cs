@@ -20,6 +20,7 @@ namespace WebCol.Data
         public DbSet<FaseMovil> FasesMoviles { get; set; }
         public DbSet<Lote> Lotes { get; set; }
         public DbSet<Modelo> Modelos { get; set; }
+        public DbSet<Comportamiento> Comportamientos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,7 +63,11 @@ namespace WebCol.Data
                         .HasOne<Analisis>()
                         .WithMany()
                         .OnDelete(DeleteBehavior.Restrict));
-
+        
+            modelBuilder.Entity<Analisis>()
+                .HasMany(a => a.Comportamientos)
+                .WithMany(c => c.Analisis);
+        
         }
     }
 }
