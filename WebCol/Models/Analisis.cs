@@ -9,7 +9,7 @@ namespace WebCol.Models
         public int Id { get; set; }
 
         [Display(Name = "Columna")]
-        public String ColumnaId { get; set; }
+        public int AsignacionColumnaId { get; set; }
 
         [DataType(DataType.Date)]
         [DateNoFuture]
@@ -26,7 +26,7 @@ namespace WebCol.Models
 
         public int CategoriaOrigen { get; set; }
 
-        public string LoteId { get; set; }
+        public required string LoteId { get; set; }
 
         [Display(Name = "pH")]
         [Range(0, 14)]
@@ -60,13 +60,14 @@ namespace WebCol.Models
         public string? Comentario { get; set; }
 
         public Lote? Lote { get; set; } 
-        public Columna? Columnas { get; set; }
+        public AsignacionColumna AsignacionColumnas { get; set; }
 
-        public List<int> PrincipiosIds { get; set; }
-        public List<ProductoPrincipio>? ProductoPrincipios { get; set; }
+        public ICollection<LavadoRegeneracion>? LavadoRegeneracion { get; set; } = new List<LavadoRegeneracion>();
         public ICollection<Comportamiento> Comportamientos { get; set; } = new List<Comportamiento>();
-        
+        public List<int>? PrincipiosIds { get; set; }
+
         [Display(Name = "Usuario")]
-        public string Usuario { get; set; }
+        public string? Usuario { get; set; }
+
     }
 }

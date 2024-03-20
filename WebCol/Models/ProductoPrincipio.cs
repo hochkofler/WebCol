@@ -10,6 +10,7 @@ namespace WebCol.Models
         public virtual Producto Producto { get; set; }
         public virtual Principio Principio { get; set; }
         public List<Analisis>? Analisis { get; set; }
-
+        // Propiedad de navegación
+        public virtual ProcedimientoAnalisis? ProcedimientoAnalisis { get; set; }
     }
 }

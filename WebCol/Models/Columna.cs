@@ -18,10 +18,13 @@ namespace WebCol.Models
         [Comparison(nameof(FechaIngreso), ComparisonType.GreaterThanOrEqualTo)]
         [Display(Name = "Fecha marcha")]
         public DateTime FechaEnMarcha { get; set; }
+
         [Display(Name = "Dimensiones")]
         public required string Dimension { get; set; }
+
         [Display(Name = "Fase estacionaria")]
         public required string FaseEstacionaria { get; set; }
+
         [Display(Name = "Clase")]
         public required string Clase { get; set; }
 
@@ -34,13 +37,15 @@ namespace WebCol.Models
         [Comparison(nameof(PhMin), ComparisonType.GreaterThanOrEqualTo)] // Se corrigió la comparación
         [Range(0, 14)]
         public decimal PhMax { get; set; }
+
         [Range(0, 2000)]
         [Display(Name = "Presión Maxima")]
         public decimal PresionMax { get; set; }
+
         [Display(Name = "Modelo")]
         public required int ModeloId { get; set; }
         public Modelo? Modelo { get; set; }
-        public List<FaseMovil>? FasesMoviles { get; set; }
-        public ICollection<Analisis> Analisis { get; set; } = new List<Analisis>();
+        public ICollection<AsignacionColumna>? AsignacionesColumnas { get; set; } = new List<AsignacionColumna>();
+        public ICollection<LavadoRegeneracion> LavadosRegeneraciones { get; set; } = new List<LavadoRegeneracion>();
     }
 }

@@ -41,6 +41,12 @@
             @Html.DisplayFor(model => model.TiempoCorrida)
         </dd>
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Inyecciones)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Inyecciones)
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Flujo)
         </dt>
         <dd class = "col-sm-10">
@@ -76,7 +82,6 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.PlatosFin)
         </dd>
-
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Comentario)
         </dt>
@@ -90,10 +95,16 @@
             @Html.DisplayFor(model => model.Lote.Id)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Columnas)
+            @Html.DisplayNameFor(model => model.AsignacionColumnas)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Columnas.Id)
+            @Html.DisplayFor(model => model.AsignacionColumnas.AsignacionColumnaId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Usuario)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Usuario)
         </dd>
     </dl>
 </div>

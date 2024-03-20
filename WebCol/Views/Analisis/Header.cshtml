@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<form asp-action="Create" methid="get">
+<form asp-action="Create" method="get">
     <div class="input-group mb-4">
         <select class="form-select form-control" name="IdLote" asp-items="@(new SelectList(Model, "Id", "Id"))">
             <option value="">Seleccione un lote</option>

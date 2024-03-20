@@ -21,6 +21,8 @@ namespace WebCol.Data
         public DbSet<Lote> Lotes { get; set; }
         public DbSet<Modelo> Modelos { get; set; }
         public DbSet<Comportamiento> Comportamientos { get; set; }
+        public DbSet<ProcedimientoAnalisis> ProcedimientosAnalisis { get; set; }
+        public DbSet<LavadoRegeneracion> LavadosRegeneraciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,35 +41,45 @@ namespace WebCol.Data
                 .WithMany(p => p.ProductosPrincipios)
                 .HasForeignKey(pp => pp.PrincipioId);
 
+            modelBuilder.Entity<AsignacionColumna>()
+                .HasKey(ac => ac.AsignacionColumnaId);
 
             modelBuilder.Entity<AsignacionColumna>()
-                .HasOne(ac => ac.ProductoPrincipio)
-                .WithMany()
-                .HasForeignKey(ac => new { ac.ProductoId, ac.PrincipioId }); // Usamos la combinación de las dos propiedades
+                .HasOne(ac => ac.ProcedimientoAnalisis)
+                .WithMany(pa => pa.AsignacionesColumnas)
+                .HasForeignKey(ac => ac.ProcedimientoAnalisisId);
 
             modelBuilder.Entity<AsignacionColumna>()
-                .HasOne(ac => ac.Columna)
-                .WithMany()
+                .HasOne(ac => ac.Columnas)
+                .WithMany(c => c.AsignacionesColumnas)
                 .HasForeignKey(ac => ac.ColumnaId);
 
-            modelBuilder.Entity<Analisis>()
-                .HasMany(a => a.ProductoPrincipios)
-                .WithMany(pp => pp.Analisis)
-                .UsingEntity<Dictionary<string, object>>(
-                    "AnalisisProductoPrincipio",
-                    j => j
-                        .HasOne<ProductoPrincipio>()
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.Restrict),
-                    j => j
-                        .HasOne<Analisis>()
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.Restrict));
-        
+            //modelBuilder.Entity<Analisis>()
+            //    .HasMany(a => a.ProductoPrincipios)
+            //    .WithMany(pp => pp.Analisis)
+            //    .UsingEntity<Dictionary<string, object>>(
+            //        "AnalisisProductoPrincipio",
+            //        j => j
+            //            .HasOne<ProductoPrincipio>()
+            //            .WithMany()
+            //            .OnDelete(DeleteBehavior.Restrict),
+            //        j => j
+            //            .HasOne<Analisis>()
+            //            .WithMany()
+            //            .OnDelete(DeleteBehavior.Restrict));
+
             modelBuilder.Entity<Analisis>()
                 .HasMany(a => a.Comportamientos)
                 .WithMany(c => c.Analisis);
-        
+
+            modelBuilder.Entity<ProcedimientoAnalisis>()
+                .HasIndex(pa => new { pa.ProductoId, pa.PrincipioId })
+                .IsUnique();
+
+            modelBuilder.Entity<ProcedimientoAnalisis>()
+                .HasOne(pa => pa.ProductoPrincipio)
+                .WithOne(pp => pp.ProcedimientoAnalisis)
+                .HasForeignKey<ProcedimientoAnalisis>(pa => new { pa.ProductoId, pa.PrincipioId });
         }
     }
 }

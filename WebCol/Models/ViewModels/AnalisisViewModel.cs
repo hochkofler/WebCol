@@ -6,5 +6,6 @@
         public Lote? Lote { get; set; }
         public List<Columna>? Columnas { get; set; }
         public List<Principio>? Principios { get; set; }
+        public List<AsignacionColumna>? AsignacionColumnas { get; set; }
     }
 }

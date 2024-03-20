@@ -13,19 +13,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Usuario)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.FechaInicio)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FechaFinal)
-            </th>            
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoriaOrigen)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Ph)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TiempoCorrida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Inyecciones)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Flujo)
@@ -52,10 +55,10 @@
                 @Html.DisplayNameFor(model => model.Lote)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Columnas)
+                @Html.DisplayNameFor(model => model.AsignacionColumnas)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductoPrincipios)
+                @Html.DisplayNameFor(model => model.Usuario)
             </th>
             <th></th>
         </tr>
@@ -64,19 +67,22 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Usuario)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.FechaInicio)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FechaFinal)
-            </td>            
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoriaOrigen)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Ph)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TiempoCorrida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inyecciones)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Flujo)
@@ -103,18 +109,11 @@
                 @Html.DisplayFor(modelItem => item.Lote.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Columnas.Id)
+                @Html.DisplayFor(modelItem => item.AsignacionColumnas.AsignacionColumnaId)
             </td>
             <td>
-                    @if (item.ProductoPrincipios != null)
-                    {
-                        foreach (var productoPrincipio in item.ProductoPrincipios)
-                        {
-                            <p>@productoPrincipio.Principio.Nombre</p>
-                        }
-                    }
+                @Html.DisplayFor(modelItem => item.Usuario)
             </td>
-
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

@@ -4,10 +4,9 @@ using WebCol.Models;
 
 public static class SeedData
 {
-    public static List<Columna> GenerateColumnaSeedData(List<FaseMovil> fasesMovilesSeedData)
+    public static List<Columna> GenerateColumnaSeedData()
     {
         List<Columna> seedData = new List<Columna>();
-        //fasesMovilesSeedData = GenerateFasesMovilesSeedData();
 
         // Ejemplos de fases estacionarias típicas de HPLC
         string[] fasesEstacionarias = { "C18", "C8", "C4", "Phenyl", "Cyano", "Amino", "Diol" };
@@ -19,20 +18,11 @@ public static class SeedData
         decimal[] phMax = { 6.0m, 6.2m, 6.5m, 6.7m, 7.0m, 7.2m, 7.5m, 7.7m, 8.0m, 8.2m, 8.5m, 8.7m, 9.0m, 9.2m, 9.5m };
 
         Random rnd = new Random();
-
         // Generar 15 columnas con datos aleatorios
         for (int i = 0; i < 15; i++)
         {
             DateTime fechaIngreso = DateTime.Now.AddDays(-rnd.Next(1, 365)); // Fecha aleatoria en el último año
-            DateTime fechaEnMarcha = fechaIngreso.AddDays(rnd.Next(1, (DateTime.Now - fechaIngreso).Days)); // Fecha aleatoria entre FechaIngreso y hoy
-
-            // Seleccionar una o más fases móviles aleatorias
-            int numFasesMoviles = rnd.Next(1, 4); // Seleccionar entre 1 y 3 fases móviles
-            List<FaseMovil> fasesMoviles = new List<FaseMovil>();
-            for (int j = 0; j < numFasesMoviles; j++)
-            {
-                fasesMoviles.Add(fasesMovilesSeedData[rnd.Next(fasesMovilesSeedData.Count)]);
-            }
+            DateTime fechaEnMarcha = fechaIngreso.AddDays(rnd.Next(1, (DateTime.Now - fechaIngreso).Days)); // Fecha aleatoria entre FechaIngreso y hoy           
 
             Columna columna = new Columna
             {
@@ -45,8 +35,7 @@ public static class SeedData
                 PhMin = phMin[rnd.Next(phMin.Length)],
                 PhMax = phMax[rnd.Next(phMax.Length)],
                 PresionMax = rnd.Next(0, 2000),
-                ModeloId = rnd.Next(1, 17), // Considerando que hay 17 marcas disponibles
-                FasesMoviles = fasesMoviles
+                ModeloId = rnd.Next(1, 17), // Considerando que hay 17 modelos disponibles
             };
 
             seedData.Add(columna);
@@ -112,10 +101,10 @@ public static class SeedData
     public static void GenerateAsignacionColumnaSeedData(ApplicationDbContext context)
     {
         var random = new Random();
-        var productosPrincipios = context.ProductosPrincipios.ToList();
+        var procedimientos = context.ProcedimientosAnalisis.ToList();
         var columnas = context.Columnas.ToList();
 
-        foreach (var productoPrincipio in productosPrincipios)
+        foreach (var procedimiento in procedimientos)
         {
             var numColumnas = random.Next(1, 4);
             var usedColumnas = new HashSet<int>();
@@ -133,10 +122,8 @@ public static class SeedData
 
                 var asignacionColumna = new AsignacionColumna
                 {
-                    ProductoId = productoPrincipio.ProductoId,
-                    PrincipioId = productoPrincipio.PrincipioId,
-                    ColumnaId = columna.Id,
-                    Columna = columna
+                    ProcedimientoAnalisisId = procedimiento.Id,
+                    ColumnaId = columna.Id
                 };
 
                 context.AsignacionesColumnas.Add(asignacionColumna);
@@ -166,6 +153,7 @@ public static class SeedData
                 context.Proveedores.AddRange(proveedores);
                 context.SaveChanges();
             }
+
             if (!context.Modelos.Any())
             {
                 var modelos = new Modelo[]
@@ -188,7 +176,7 @@ public static class SeedData
                 new Modelo { Nombre = "Vanquish Flex", ProveedorId = 4 }, // Thermo Fisher Scientific
                 new Modelo { Nombre = "Altus HPLC", ProveedorId = 5 }, // PerkinElmer
                 new Modelo { Nombre = "Primaide HPLC", ProveedorId = 6 } // Hitachi High-Tech
-                                                                        // Agrega más marcas si es necesario
+                // Agrega más marcas si es necesario
                 };
                 context.Modelos.AddRange(modelos);
                 context.SaveChanges();
@@ -203,8 +191,7 @@ public static class SeedData
 
             if (!context.Columnas.Any())
             {
-                var fasesMoviles = context.FasesMoviles.ToList();
-                var columnas = GenerateColumnaSeedData(fasesMoviles);
+                var columnas = GenerateColumnaSeedData();
                 context.Columnas.AddRange(columnas);
                 context.SaveChanges();
             }
@@ -227,7 +214,7 @@ public static class SeedData
             {
                 var principios = context.Principios.ToList();
                 var productos = new Producto[]
-                {                
+                {
                     new Producto { Nombre = "Panadol", Tipo = "PT", Registro = "123456" },
                     new Producto { Nombre = "Nurofen", Tipo = "PT", Registro = "789012" },
                     new Producto { Nombre = "Prilosec", Tipo = "PT", Registro = "345678" },
@@ -266,7 +253,76 @@ public static class SeedData
                 GenerateAsignacionColumnaSeedData(context);
             }
 
+            if (!context.ProcedimientosAnalisis.Any())
+            {
+                context.ProcedimientosAnalisis.AddRange(
+                new ProcedimientoAnalisis
+                {
+                    FaseMovilId = 1,
+                    Tipo = "Tipo1",
+                    ProductoId = 1,
+                    PrincipioId = 1
+                },
+
+                new ProcedimientoAnalisis
+                {
+                    FaseMovilId = 2,
+                    Tipo = "Tipo2",
+                    ProductoId = 2,
+                    PrincipioId = 2
+                },
+
+                new ProcedimientoAnalisis
+                {
+                    FaseMovilId = 3,
+                    Tipo = "Tipo3",
+                    ProductoId = 3,
+                    PrincipioId = 3
+                }
+                );
+                context.SaveChanges();
+            }
+                        
+            if (!context.LavadosRegeneraciones.Any())
+            {
+                context.LavadosRegeneraciones.AddRange(
+                new LavadoRegeneracion
+                {
+                    Fecha = DateTime.Now,
+                    ColumnaId = "Columna1",
+                    AnalisisId = 1
+                },
+
+                new LavadoRegeneracion
+                {
+                    Fecha = DateTime.Now,
+                    ColumnaId = "Columna2",
+                    AnalisisId = 2
+                },
+
+                new LavadoRegeneracion
+                {
+                    Fecha = DateTime.Now,
+                    ColumnaId = "Columna3",
+                    AnalisisId = 3
+                }
+            );
+            context.SaveChanges();
+            }
+
+            if (!context.Comportamientos.Any())
+            {
+                var comportamientos = new Comportamiento[]
+                {
+                new Comportamiento { Nombre = "Picos Partidos" },
+                new Comportamiento { Nombre = "Pico Asimetrico" },
+                new Comportamiento { Nombre = "Pico Cola" },
+                new Comportamiento { Nombre = "Pico Rayado" }
+                };
+
+                context.Comportamientos.AddRange(comportamientos);
+                context.SaveChanges();
+            }
         }
     }    
 }
-

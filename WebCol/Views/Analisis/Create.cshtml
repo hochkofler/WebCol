@@ -1,152 +1,104 @@
-﻿@model WebCol.Models.ViewModels.AnalisisViewModel
+﻿@model WebCol.Models.Analisis
 
 @{
-    ViewData["Title"] = "Crear Análisis";
+    ViewData["Title"] = "Create";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>Create</h1>
 
 <h4>Analisis</h4>
 <hr />
-
 <div class="row">
     <div class="col-md-4">
-        @if (Model.Columnas == null)
-        {
-            <form asp-action="Create" method="get">
-                <div class="form-group">
-                    <label asp-for="Analisis.LoteId" class="control-label"></label>
-                    @if (Model.Lote == null)
-                    {
-                        <select name="id" class="form-control" asp-items="ViewBag.lotes"></select>
-                        <button class="btn btn-outline-secondary" type="submit" asp-action="Create" >Continuar</button>
-                    }
-                    else
-                    {
-                        <select name="id" class="form-control" asp-items="ViewBag.lotes" disabled></select>
-                    }
-
-                    @if (Model.Principios != null)
-                    {
-                        <div class="form-group">
-                            <label asp-for="Analisis.ProductoPrincipios" class="control-label"></label>
-                            <br />
-                            @foreach (var principio in ViewBag.principios)
-                            {
-                                <input type="checkbox" name="principios" value="@principio.Value" /> @principio.Text
-                                <br />
-                            }
-
-
-                            <button class="btn btn-outline-secondary" type="submit" asp-action="Create" asp-route-id=@Model.Lote.Id>Continuar</button>
-                        </div>
-                    }
-                </div>
-
-            </form>
-        } 
-        else 
-        {
-            <form asp-action="Create" method="post">
-                <div class="form-group">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <h2>@ViewBag.producto.Nombre</h2>
-                    <input type="hidden" name="Analisis.LoteId" value="@Model.Analisis.LoteId" />
-                    
-
-                    @if (Model.Analisis.ProductoPrincipios != null)
-                    {
-                        foreach (var productoPrincipio in Model.Analisis.ProductoPrincipios)
-                        {
-                            <input type="hidden" name="Analisis.PrincipiosIds" value="@productoPrincipio.PrincipioId" />
-                        }
-                    }
-                    
-                    <select name="id" class="form-control" asp-items="ViewBag.lotes" disabled></select>
-                    @foreach (var principio in ViewBag.principios)
-                    {
-                       <input type="checkbox" name="principios" value="@principio.Value" 
-                       @(Model.Analisis.ProductoPrincipios != null 
-                       && Model.Analisis.ProductoPrincipios.Any(p => p.PrincipioId == int.Parse(principio.Value)) ? "checked" : "") disabled /> @principio.Text
-                       <br />
-                    }
-
-                    <input type="hidden" name="Analisis.Usuario" value="@Model.Analisis.Usuario" />
-
-                    <div class="form-group">
-                        <label asp-for="Analisis.ColumnaId" class="control-label"></label>
-                        <select name="Analisis.ColumnaId" class="form-control" asp-items="ViewBag.columnas"></select>
-                        <span asp-validation-for="Analisis.ColumnaId" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.FechaInicio" class="control-label"></label>
-                        <input asp-for="Analisis.FechaInicio" class="form-control" />
-                        <span asp-validation-for="Analisis.FechaInicio" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.FechaFinal" class="control-label"></label>
-                        <input asp-for="Analisis.FechaFinal" class="form-control" />
-                        <span asp-validation-for="Analisis.FechaFinal" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.Ph" class="control-label"></label>
-                        <input asp-for="Analisis.Ph" class="form-control" />
-                        <span asp-validation-for="Analisis.Ph" class="text-danger"></span>
-                    </div
-
-                    <div class="form-group">
-                        <label asp-for="Analisis.TiempoCorrida" class="control-label"></label>
-                        <input asp-for="Analisis.TiempoCorrida" class="form-control" />
-                        <span asp-validation-for="Analisis.TiempoCorrida" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.Flujo" class="control-label"></label>
-                        <input asp-for="Analisis.Flujo" class="form-control" />
-                        <span asp-validation-for="Analisis.Flujo" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.Temperatura" class="control-label"></label>
-                        <input asp-for="Analisis.Temperatura" class="form-control" />
-                        <span asp-validation-for="Analisis.Temperatura" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.PresionIni" class="control-label"></label>
-                        <input asp-for="Analisis.PresionIni" class="form-control" />
-                        <span asp-validation-for="Analisis.PresionIni" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.PresionFin" class="control-label"></label>
-                        <input asp-for="Analisis.PresionFin" class="form-control" />
-                        <span asp-validation-for="Analisis.PresionFin" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.PlatosIni" class="control-label"></label>
-                        <input asp-for="Analisis.PlatosIni" class="form-control" />
-                        <span asp-validation-for="Analisis.PlatosIni" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Analisis.PlatosFin" class="control-label"></label>
-                        <input asp-for="Analisis.PlatosFin" class="form-control" />
-                        <span asp-validation-for="Analisis.PlatosFin" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label asp-for="Analisis.Comentario" class="control-label"></label>
-                        <input asp-for="Analisis.Comentario" class="form-control" />
-                        <span asp-validation-for="Analisis.Comentario" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
-                    </div>
-
-                    
-                </div>
-
-            </form>
-        }
-
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AsignacionColumnaId" class="control-label"></label>
+                <select asp-for="AsignacionColumnaId" class ="form-control" asp-items="ViewBag.AsignacionColumnaId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaInicio" class="control-label"></label>
+                <input asp-for="FechaInicio" class="form-control" />
+                <span asp-validation-for="FechaInicio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaFinal" class="control-label"></label>
+                <input asp-for="FechaFinal" class="form-control" />
+                <span asp-validation-for="FechaFinal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoriaOrigen" class="control-label"></label>
+                <input asp-for="CategoriaOrigen" class="form-control" />
+                <span asp-validation-for="CategoriaOrigen" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LoteId" class="control-label"></label>
+                <select asp-for="LoteId" class ="form-control" asp-items="ViewBag.LoteId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ph" class="control-label"></label>
+                <input asp-for="Ph" class="form-control" />
+                <span asp-validation-for="Ph" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TiempoCorrida" class="control-label"></label>
+                <input asp-for="TiempoCorrida" class="form-control" />
+                <span asp-validation-for="TiempoCorrida" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Inyecciones" class="control-label"></label>
+                <input asp-for="Inyecciones" class="form-control" />
+                <span asp-validation-for="Inyecciones" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Flujo" class="control-label"></label>
+                <input asp-for="Flujo" class="form-control" />
+                <span asp-validation-for="Flujo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Temperatura" class="control-label"></label>
+                <input asp-for="Temperatura" class="form-control" />
+                <span asp-validation-for="Temperatura" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PresionIni" class="control-label"></label>
+                <input asp-for="PresionIni" class="form-control" />
+                <span asp-validation-for="PresionIni" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PresionFin" class="control-label"></label>
+                <input asp-for="PresionFin" class="form-control" />
+                <span asp-validation-for="PresionFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlatosIni" class="control-label"></label>
+                <input asp-for="PlatosIni" class="form-control" />
+                <span asp-validation-for="PlatosIni" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlatosFin" class="control-label"></label>
+                <input asp-for="PlatosFin" class="form-control" />
+                <span asp-validation-for="PlatosFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comentario" class="control-label"></label>
+                <input asp-for="Comentario" class="form-control" />
+                <span asp-validation-for="Comentario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Usuario" class="control-label"></label>
+                <input asp-for="Usuario" class="form-control" />
+                <span asp-validation-for="Usuario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
