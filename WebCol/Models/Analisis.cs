@@ -60,14 +60,13 @@ namespace WebCol.Models
         public string? Comentario { get; set; }
 
         public Lote? Lote { get; set; } 
-        public AsignacionColumna AsignacionColumnas { get; set; }
+        public virtual AsignacionColumna? AsignacionColumnas { get; set; }
 
         public ICollection<LavadoRegeneracion>? LavadoRegeneracion { get; set; } = new List<LavadoRegeneracion>();
         public ICollection<Comportamiento> Comportamientos { get; set; } = new List<Comportamiento>();
         public List<int>? PrincipiosIds { get; set; }
-
-        [Display(Name = "Usuario")]
-        public string? Usuario { get; set; }
+                
+        public required string Usuario { get; set; }
 
     }
 }

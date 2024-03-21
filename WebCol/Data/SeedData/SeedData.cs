@@ -106,7 +106,7 @@ public static class SeedData
 
         foreach (var procedimiento in procedimientos)
         {
-            var numColumnas = random.Next(1, 4);
+            var numColumnas = random.Next(1, 15);
             var usedColumnas = new HashSet<int>();
 
             for (int i = 0; i < numColumnas; i++)
@@ -123,7 +123,8 @@ public static class SeedData
                 var asignacionColumna = new AsignacionColumna
                 {
                     ProcedimientoAnalisisId = procedimiento.Id,
-                    ColumnaId = columna.Id
+                    ColumnaId = columna.Id,
+                    Activa = true
                 };
 
                 context.AsignacionesColumnas.Add(asignacionColumna);
@@ -255,60 +256,38 @@ public static class SeedData
 
             if (!context.ProcedimientosAnalisis.Any())
             {
-                context.ProcedimientosAnalisis.AddRange(
-                new ProcedimientoAnalisis
+                var fasesMoviles = context.FasesMoviles.ToList();
+                var productosPrincipios = context.ProductosPrincipios.ToList();
+                var random = new Random();
+                
+                for ( var i = 0; i < productosPrincipios.Count; i++)
                 {
-                    FaseMovilId = 1,
-                    Tipo = "Tipo1",
-                    ProductoId = 1,
-                    PrincipioId = 1
-                },
-
-                new ProcedimientoAnalisis
-                {
-                    FaseMovilId = 2,
-                    Tipo = "Tipo2",
-                    ProductoId = 2,
-                    PrincipioId = 2
-                },
-
-                new ProcedimientoAnalisis
-                {
-                    FaseMovilId = 3,
-                    Tipo = "Tipo3",
-                    ProductoId = 3,
-                    PrincipioId = 3
-                }
-                );
+                    var procedimiento = new ProcedimientoAnalisis
+                    {
+                        FaseMovilId = fasesMoviles[random.Next(fasesMoviles.Count)].Id,
+                        Tipo = "Tipo" + i,
+                        ProductoId = productosPrincipios[i].ProductoId,
+                        PrincipioId = productosPrincipios[i].PrincipioId
+                    };
+                    context.ProcedimientosAnalisis.Add(procedimiento);
+                }                
                 context.SaveChanges();
             }
                         
-            if (!context.LavadosRegeneraciones.Any())
-            {
-                context.LavadosRegeneraciones.AddRange(
-                new LavadoRegeneracion
-                {
-                    Fecha = DateTime.Now,
-                    ColumnaId = "Columna1",
-                    AnalisisId = 1
-                },
-
-                new LavadoRegeneracion
-                {
-                    Fecha = DateTime.Now,
-                    ColumnaId = "Columna2",
-                    AnalisisId = 2
-                },
-
-                new LavadoRegeneracion
-                {
-                    Fecha = DateTime.Now,
-                    ColumnaId = "Columna3",
-                    AnalisisId = 3
-                }
-            );
-            context.SaveChanges();
-            }
+            //if (!context.LavadosRegeneraciones.Any())
+            //{
+            //    var lavadosRegeneraciones = new LavadoRegeneracion[]
+            //    {
+            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "2A", AnalisisId = 1 },
+            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "1", AnalisisId = 2 },
+            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "3B", AnalisisId = 3 },
+            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "4A", AnalisisId = 4 },
+            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "5", AnalisisId = 5 },
+            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "6B", AnalisisId = 6 }
+            //    };
+            //    context.LavadosRegeneraciones.AddRange(lavadosRegeneraciones);
+            //    context.SaveChanges();
+            //}
 
             if (!context.Comportamientos.Any())
             {
