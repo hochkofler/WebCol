@@ -151,6 +151,46 @@ namespace WebCol.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProcedimientosAnalisis",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FaseMovilId = table.Column<int>(type: "int", nullable: false),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
+                    PrincipioId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProcedimientosAnalisis", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProcedimientosAnalisis_FasesMoviles_FaseMovilId",
+                        column: x => x.FaseMovilId,
+                        principalTable: "FasesMoviles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProcedimientosAnalisis_Principios_PrincipioId",
+                        column: x => x.PrincipioId,
+                        principalTable: "Principios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProcedimientosAnalisis_ProductosPrincipios_ProductoId_PrincipioId",
+                        columns: x => new { x.ProductoId, x.PrincipioId },
+                        principalTable: "ProductosPrincipios",
+                        principalColumns: new[] { "ProductoId", "PrincipioId" },
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_ProcedimientosAnalisis_Productos_ProductoId",
+                        column: x => x.ProductoId,
+                        principalTable: "Productos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Columnas",
                 columns: table => new
                 {
@@ -163,7 +203,8 @@ namespace WebCol.Data.Migrations
                     PhMin = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PhMax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PresionMax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ModeloId = table.Column<int>(type: "int", nullable: false)
+                    ModeloId = table.Column<int>(type: "int", nullable: false),
+                    ProcedimientoAnalisisId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -174,6 +215,38 @@ namespace WebCol.Data.Migrations
                         principalTable: "Modelos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Columnas_ProcedimientosAnalisis_ProcedimientoAnalisisId",
+                        column: x => x.ProcedimientoAnalisisId,
+                        principalTable: "ProcedimientosAnalisis",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AsignacionesColumnas",
+                columns: table => new
+                {
+                    AsignacionColumnaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Activa = table.Column<bool>(type: "bit", nullable: false),
+                    ColumnaId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProcedimientoAnalisisId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AsignacionesColumnas", x => x.AsignacionColumnaId);
+                    table.ForeignKey(
+                        name: "FK_AsignacionesColumnas_Columnas_ColumnaId",
+                        column: x => x.ColumnaId,
+                        principalTable: "Columnas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AsignacionesColumnas_ProcedimientosAnalisis_ProcedimientoAnalisisId",
+                        column: x => x.ProcedimientoAnalisisId,
+                        principalTable: "ProcedimientosAnalisis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,7 +255,7 @@ namespace WebCol.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ColumnaId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AsignacionColumnaId = table.Column<int>(type: "int", nullable: false),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaFinal = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CategoriaOrigen = table.Column<int>(type: "int", nullable: false),
@@ -197,75 +270,31 @@ namespace WebCol.Data.Migrations
                     PlatosIni = table.Column<int>(type: "int", nullable: false),
                     PlatosFin = table.Column<int>(type: "int", nullable: false),
                     Comentario = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PrincipiosIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Usuario = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PrincipiosIds = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Usuario = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductoPrincipioPrincipioId = table.Column<int>(type: "int", nullable: true),
+                    ProductoPrincipioProductoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Analisis", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Analisis_Columnas_ColumnaId",
-                        column: x => x.ColumnaId,
-                        principalTable: "Columnas",
-                        principalColumn: "Id",
+                        name: "FK_Analisis_AsignacionesColumnas_AsignacionColumnaId",
+                        column: x => x.AsignacionColumnaId,
+                        principalTable: "AsignacionesColumnas",
+                        principalColumn: "AsignacionColumnaId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Analisis_Lotes_LoteId",
                         column: x => x.LoteId,
                         principalTable: "Lotes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AsignacionesColumnas",
-                columns: table => new
-                {
-                    AsignacionColumnaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductoId = table.Column<int>(type: "int", nullable: false),
-                    PrincipioId = table.Column<int>(type: "int", nullable: false),
-                    ColumnaId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AsignacionesColumnas", x => x.AsignacionColumnaId);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_AsignacionesColumnas_Columnas_ColumnaId",
-                        column: x => x.ColumnaId,
-                        principalTable: "Columnas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AsignacionesColumnas_ProductosPrincipios_ProductoId_PrincipioId",
-                        columns: x => new { x.ProductoId, x.PrincipioId },
+                        name: "FK_Analisis_ProductosPrincipios_ProductoPrincipioProductoId_ProductoPrincipioPrincipioId",
+                        columns: x => new { x.ProductoPrincipioProductoId, x.ProductoPrincipioPrincipioId },
                         principalTable: "ProductosPrincipios",
-                        principalColumns: new[] { "ProductoId", "PrincipioId" },
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ColumnaFaseMovil",
-                columns: table => new
-                {
-                    ColumnasId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FasesMovilesId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ColumnaFaseMovil", x => new { x.ColumnasId, x.FasesMovilesId });
-                    table.ForeignKey(
-                        name: "FK_ColumnaFaseMovil_Columnas_ColumnasId",
-                        column: x => x.ColumnasId,
-                        principalTable: "Columnas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ColumnaFaseMovil_FasesMoviles_FasesMovilesId",
-                        column: x => x.FasesMovilesId,
-                        principalTable: "FasesMoviles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumns: new[] { "ProductoId", "PrincipioId" });
                 });
 
             migrationBuilder.CreateTable(
@@ -293,34 +322,36 @@ namespace WebCol.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AnalisisProductoPrincipio",
+                name: "LavadosRegeneraciones",
                 columns: table => new
                 {
-                    AnalisisId = table.Column<int>(type: "int", nullable: false),
-                    ProductoPrincipiosProductoId = table.Column<int>(type: "int", nullable: false),
-                    ProductoPrincipiosPrincipioId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ColumnaId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AnalisisId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AnalisisProductoPrincipio", x => new { x.AnalisisId, x.ProductoPrincipiosProductoId, x.ProductoPrincipiosPrincipioId });
+                    table.PrimaryKey("PK_LavadosRegeneraciones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AnalisisProductoPrincipio_Analisis_AnalisisId",
+                        name: "FK_LavadosRegeneraciones_Analisis_AnalisisId",
                         column: x => x.AnalisisId,
                         principalTable: "Analisis",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AnalisisProductoPrincipio_ProductosPrincipios_ProductoPrincipiosProductoId_ProductoPrincipiosPrincipioId",
-                        columns: x => new { x.ProductoPrincipiosProductoId, x.ProductoPrincipiosPrincipioId },
-                        principalTable: "ProductosPrincipios",
-                        principalColumns: new[] { "ProductoId", "PrincipioId" },
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_LavadosRegeneraciones_Columnas_ColumnaId",
+                        column: x => x.ColumnaId,
+                        principalTable: "Columnas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Analisis_ColumnaId",
+                name: "IX_Analisis_AsignacionColumnaId",
                 table: "Analisis",
-                column: "ColumnaId");
+                column: "AsignacionColumnaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Analisis_LoteId",
@@ -328,14 +359,14 @@ namespace WebCol.Data.Migrations
                 column: "LoteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Analisis_ProductoPrincipioProductoId_ProductoPrincipioPrincipioId",
+                table: "Analisis",
+                columns: new[] { "ProductoPrincipioProductoId", "ProductoPrincipioPrincipioId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AnalisisComportamiento_ComportamientosId",
                 table: "AnalisisComportamiento",
                 column: "ComportamientosId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AnalisisProductoPrincipio_ProductoPrincipiosProductoId_ProductoPrincipiosPrincipioId",
-                table: "AnalisisProductoPrincipio",
-                columns: new[] { "ProductoPrincipiosProductoId", "ProductoPrincipiosPrincipioId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AsignacionesColumnas_ColumnaId",
@@ -343,19 +374,29 @@ namespace WebCol.Data.Migrations
                 column: "ColumnaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AsignacionesColumnas_ProductoId_PrincipioId",
+                name: "IX_AsignacionesColumnas_ProcedimientoAnalisisId",
                 table: "AsignacionesColumnas",
-                columns: new[] { "ProductoId", "PrincipioId" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ColumnaFaseMovil_FasesMovilesId",
-                table: "ColumnaFaseMovil",
-                column: "FasesMovilesId");
+                column: "ProcedimientoAnalisisId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Columnas_ModeloId",
                 table: "Columnas",
                 column: "ModeloId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Columnas_ProcedimientoAnalisisId",
+                table: "Columnas",
+                column: "ProcedimientoAnalisisId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LavadosRegeneraciones_AnalisisId",
+                table: "LavadosRegeneraciones",
+                column: "AnalisisId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LavadosRegeneraciones_ColumnaId",
+                table: "LavadosRegeneraciones",
+                column: "ColumnaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lotes_ProductoId",
@@ -373,6 +414,22 @@ namespace WebCol.Data.Migrations
                 column: "ProductoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProcedimientosAnalisis_FaseMovilId",
+                table: "ProcedimientosAnalisis",
+                column: "FaseMovilId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProcedimientosAnalisis_PrincipioId",
+                table: "ProcedimientosAnalisis",
+                column: "PrincipioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProcedimientosAnalisis_ProductoId_PrincipioId",
+                table: "ProcedimientosAnalisis",
+                columns: new[] { "ProductoId", "PrincipioId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductosPrincipios_PrincipioId",
                 table: "ProductosPrincipios",
                 column: "PrincipioId");
@@ -385,13 +442,7 @@ namespace WebCol.Data.Migrations
                 name: "AnalisisComportamiento");
 
             migrationBuilder.DropTable(
-                name: "AnalisisProductoPrincipio");
-
-            migrationBuilder.DropTable(
-                name: "AsignacionesColumnas");
-
-            migrationBuilder.DropTable(
-                name: "ColumnaFaseMovil");
+                name: "LavadosRegeneraciones");
 
             migrationBuilder.DropTable(
                 name: "Comportamientos");
@@ -400,28 +451,34 @@ namespace WebCol.Data.Migrations
                 name: "Analisis");
 
             migrationBuilder.DropTable(
-                name: "ProductosPrincipios");
-
-            migrationBuilder.DropTable(
-                name: "FasesMoviles");
-
-            migrationBuilder.DropTable(
-                name: "Columnas");
+                name: "AsignacionesColumnas");
 
             migrationBuilder.DropTable(
                 name: "Lotes");
 
             migrationBuilder.DropTable(
-                name: "Principios");
+                name: "Columnas");
 
             migrationBuilder.DropTable(
                 name: "Modelos");
 
             migrationBuilder.DropTable(
-                name: "Productos");
+                name: "ProcedimientosAnalisis");
 
             migrationBuilder.DropTable(
                 name: "Proveedores");
+
+            migrationBuilder.DropTable(
+                name: "FasesMoviles");
+
+            migrationBuilder.DropTable(
+                name: "ProductosPrincipios");
+
+            migrationBuilder.DropTable(
+                name: "Principios");
+
+            migrationBuilder.DropTable(
+                name: "Productos");
         }
     }
 }

@@ -303,6 +303,7 @@ namespace WebCol.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Usuario")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -448,7 +449,7 @@ namespace WebCol.Data.Migrations
 
                     b.HasIndex("ColumnaId");
 
-                    b.ToTable("LavadoRegeneracion");
+                    b.ToTable("LavadosRegeneraciones");
                 });
 
             modelBuilder.Entity("WebCol.Models.Lote", b =>

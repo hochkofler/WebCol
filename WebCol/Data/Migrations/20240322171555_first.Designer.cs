@@ -12,7 +12,7 @@ using WebCol.Data;
 namespace WebCol.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240319191150_first")]
+    [Migration("20240322171555_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -38,39 +38,6 @@ namespace WebCol.Data.Migrations
                     b.HasIndex("ComportamientosId");
 
                     b.ToTable("AnalisisComportamiento");
-                });
-
-            modelBuilder.Entity("AnalisisProductoPrincipio", b =>
-                {
-                    b.Property<int>("AnalisisId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoPrincipiosProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoPrincipiosPrincipioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AnalisisId", "ProductoPrincipiosProductoId", "ProductoPrincipiosPrincipioId");
-
-                    b.HasIndex("ProductoPrincipiosProductoId", "ProductoPrincipiosPrincipioId");
-
-                    b.ToTable("AnalisisProductoPrincipio");
-                });
-
-            modelBuilder.Entity("ColumnaFaseMovil", b =>
-                {
-                    b.Property<string>("ColumnasId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("FasesMovilesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ColumnasId", "FasesMovilesId");
-
-                    b.HasIndex("FasesMovilesId");
-
-                    b.ToTable("ColumnaFaseMovil");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -283,12 +250,11 @@ namespace WebCol.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoriaOrigen")
+                    b.Property<int>("AsignacionColumnaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ColumnaId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("CategoriaOrigen")
+                        .HasColumnType("int");
 
                     b.Property<string>("Comentario")
                         .HasColumnType("nvarchar(max)");
@@ -325,8 +291,13 @@ namespace WebCol.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("PrincipiosIds")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProductoPrincipioPrincipioId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductoPrincipioProductoId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Temperatura")
                         .HasColumnType("decimal(18,2)");
@@ -340,9 +311,11 @@ namespace WebCol.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ColumnaId");
+                    b.HasIndex("AsignacionColumnaId");
 
                     b.HasIndex("LoteId");
+
+                    b.HasIndex("ProductoPrincipioProductoId", "ProductoPrincipioPrincipioId");
 
                     b.ToTable("Analisis");
                 });
@@ -355,21 +328,21 @@ namespace WebCol.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AsignacionColumnaId"));
 
+                    b.Property<bool>("Activa")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ColumnaId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("PrincipioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoId")
+                    b.Property<int>("ProcedimientoAnalisisId")
                         .HasColumnType("int");
 
                     b.HasKey("AsignacionColumnaId");
 
                     b.HasIndex("ColumnaId");
 
-                    b.HasIndex("ProductoId", "PrincipioId");
+                    b.HasIndex("ProcedimientoAnalisisId");
 
                     b.ToTable("AsignacionesColumnas");
                 });
@@ -409,9 +382,14 @@ namespace WebCol.Data.Migrations
                     b.Property<decimal>("PresionMax")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("ProcedimientoAnalisisId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ModeloId");
+
+                    b.HasIndex("ProcedimientoAnalisisId");
 
                     b.ToTable("Columnas");
                 });
@@ -448,6 +426,33 @@ namespace WebCol.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FasesMoviles");
+                });
+
+            modelBuilder.Entity("WebCol.Models.LavadoRegeneracion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnalisisId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ColumnaId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnalisisId");
+
+                    b.HasIndex("ColumnaId");
+
+                    b.ToTable("LavadosRegeneraciones");
                 });
 
             modelBuilder.Entity("WebCol.Models.Lote", b =>
@@ -519,6 +524,39 @@ namespace WebCol.Data.Migrations
                     b.HasIndex("ProductoId");
 
                     b.ToTable("Principios");
+                });
+
+            modelBuilder.Entity("WebCol.Models.ProcedimientoAnalisis", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FaseMovilId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrincipioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FaseMovilId");
+
+                    b.HasIndex("PrincipioId");
+
+                    b.HasIndex("ProductoId", "PrincipioId")
+                        .IsUnique();
+
+                    b.ToTable("ProcedimientosAnalisis");
                 });
 
             modelBuilder.Entity("WebCol.Models.Producto", b =>
@@ -593,36 +631,6 @@ namespace WebCol.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AnalisisProductoPrincipio", b =>
-                {
-                    b.HasOne("WebCol.Models.Analisis", null)
-                        .WithMany()
-                        .HasForeignKey("AnalisisId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("WebCol.Models.ProductoPrincipio", null)
-                        .WithMany()
-                        .HasForeignKey("ProductoPrincipiosProductoId", "ProductoPrincipiosPrincipioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ColumnaFaseMovil", b =>
-                {
-                    b.HasOne("WebCol.Models.Columna", null)
-                        .WithMany()
-                        .HasForeignKey("ColumnasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebCol.Models.FaseMovil", null)
-                        .WithMany()
-                        .HasForeignKey("FasesMovilesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -676,9 +684,9 @@ namespace WebCol.Data.Migrations
 
             modelBuilder.Entity("WebCol.Models.Analisis", b =>
                 {
-                    b.HasOne("WebCol.Models.Columna", "Columnas")
+                    b.HasOne("WebCol.Models.AsignacionColumna", "AsignacionColumnas")
                         .WithMany("Analisis")
-                        .HasForeignKey("ColumnaId")
+                        .HasForeignKey("AsignacionColumnaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -688,28 +696,32 @@ namespace WebCol.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Columnas");
+                    b.HasOne("WebCol.Models.ProductoPrincipio", null)
+                        .WithMany("Analisis")
+                        .HasForeignKey("ProductoPrincipioProductoId", "ProductoPrincipioPrincipioId");
+
+                    b.Navigation("AsignacionColumnas");
 
                     b.Navigation("Lote");
                 });
 
             modelBuilder.Entity("WebCol.Models.AsignacionColumna", b =>
                 {
-                    b.HasOne("WebCol.Models.Columna", "Columna")
-                        .WithMany()
+                    b.HasOne("WebCol.Models.Columna", "Columnas")
+                        .WithMany("AsignacionesColumnas")
                         .HasForeignKey("ColumnaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebCol.Models.ProductoPrincipio", "ProductoPrincipio")
-                        .WithMany()
-                        .HasForeignKey("ProductoId", "PrincipioId")
+                    b.HasOne("WebCol.Models.ProcedimientoAnalisis", "ProcedimientoAnalisis")
+                        .WithMany("AsignacionesColumnas")
+                        .HasForeignKey("ProcedimientoAnalisisId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Columna");
+                    b.Navigation("Columnas");
 
-                    b.Navigation("ProductoPrincipio");
+                    b.Navigation("ProcedimientoAnalisis");
                 });
 
             modelBuilder.Entity("WebCol.Models.Columna", b =>
@@ -720,7 +732,30 @@ namespace WebCol.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WebCol.Models.ProcedimientoAnalisis", null)
+                        .WithMany("Columnas")
+                        .HasForeignKey("ProcedimientoAnalisisId");
+
                     b.Navigation("Modelo");
+                });
+
+            modelBuilder.Entity("WebCol.Models.LavadoRegeneracion", b =>
+                {
+                    b.HasOne("WebCol.Models.Analisis", "Analisis")
+                        .WithMany("LavadoRegeneracion")
+                        .HasForeignKey("AnalisisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebCol.Models.Columna", "Columna")
+                        .WithMany("LavadosRegeneraciones")
+                        .HasForeignKey("ColumnaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Analisis");
+
+                    b.Navigation("Columna");
                 });
 
             modelBuilder.Entity("WebCol.Models.Lote", b =>
@@ -752,6 +787,41 @@ namespace WebCol.Data.Migrations
                         .HasForeignKey("ProductoId");
                 });
 
+            modelBuilder.Entity("WebCol.Models.ProcedimientoAnalisis", b =>
+                {
+                    b.HasOne("WebCol.Models.FaseMovil", "FaseMovil")
+                        .WithMany("ProcedimientoAnalisis")
+                        .HasForeignKey("FaseMovilId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebCol.Models.Principio", "Principio")
+                        .WithMany()
+                        .HasForeignKey("PrincipioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebCol.Models.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebCol.Models.ProductoPrincipio", "ProductoPrincipio")
+                        .WithOne("ProcedimientoAnalisis")
+                        .HasForeignKey("WebCol.Models.ProcedimientoAnalisis", "ProductoId", "PrincipioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FaseMovil");
+
+                    b.Navigation("Principio");
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("ProductoPrincipio");
+                });
+
             modelBuilder.Entity("WebCol.Models.ProductoPrincipio", b =>
                 {
                     b.HasOne("WebCol.Models.Principio", "Principio")
@@ -771,9 +841,26 @@ namespace WebCol.Data.Migrations
                     b.Navigation("Producto");
                 });
 
-            modelBuilder.Entity("WebCol.Models.Columna", b =>
+            modelBuilder.Entity("WebCol.Models.Analisis", b =>
+                {
+                    b.Navigation("LavadoRegeneracion");
+                });
+
+            modelBuilder.Entity("WebCol.Models.AsignacionColumna", b =>
                 {
                     b.Navigation("Analisis");
+                });
+
+            modelBuilder.Entity("WebCol.Models.Columna", b =>
+                {
+                    b.Navigation("AsignacionesColumnas");
+
+                    b.Navigation("LavadosRegeneraciones");
+                });
+
+            modelBuilder.Entity("WebCol.Models.FaseMovil", b =>
+                {
+                    b.Navigation("ProcedimientoAnalisis");
                 });
 
             modelBuilder.Entity("WebCol.Models.Modelo", b =>
@@ -786,6 +873,13 @@ namespace WebCol.Data.Migrations
                     b.Navigation("ProductosPrincipios");
                 });
 
+            modelBuilder.Entity("WebCol.Models.ProcedimientoAnalisis", b =>
+                {
+                    b.Navigation("AsignacionesColumnas");
+
+                    b.Navigation("Columnas");
+                });
+
             modelBuilder.Entity("WebCol.Models.Producto", b =>
                 {
                     b.Navigation("Lotes");
@@ -793,6 +887,13 @@ namespace WebCol.Data.Migrations
                     b.Navigation("Principios");
 
                     b.Navigation("ProductosPrincipios");
+                });
+
+            modelBuilder.Entity("WebCol.Models.ProductoPrincipio", b =>
+                {
+                    b.Navigation("Analisis");
+
+                    b.Navigation("ProcedimientoAnalisis");
                 });
 
             modelBuilder.Entity("WebCol.Models.Proveedor", b =>

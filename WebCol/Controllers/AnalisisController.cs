@@ -170,7 +170,7 @@ namespace WebCol.Controllers
         {
             if (ModelState.IsValid)
             {
-                analisis.Usuario = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                //analisis.Usuario = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 _context.Add(analisis);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

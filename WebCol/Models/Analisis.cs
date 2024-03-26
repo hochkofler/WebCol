@@ -66,7 +66,7 @@ namespace WebCol.Models
         public ICollection<Comportamiento> Comportamientos { get; set; } = new List<Comportamiento>();
         public List<int>? PrincipiosIds { get; set; }
                 
-        public required string Usuario { get; set; }
+        public string Usuario { get; set; }
 
     }
 }
