@@ -246,7 +246,7 @@ public static class SeedData
 
             if (!context.ProductosPrincipios.Any())
             {
-                GenerateProductoPrincipioSeedData(context);
+                //GenerateProductoPrincipioSeedData(context);
             }
 
             if (!context.AsignacionesColumnas.Any())
@@ -273,21 +273,21 @@ public static class SeedData
                 }                
                 context.SaveChanges();
             }
-                        
-            //if (!context.LavadosRegeneraciones.Any())
-            //{
-            //    var lavadosRegeneraciones = new LavadoRegeneracion[]
-            //    {
-            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "2A", AnalisisId = 1 },
-            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "1", AnalisisId = 2 },
-            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "3B", AnalisisId = 3 },
-            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "4A", AnalisisId = 4 },
-            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "5", AnalisisId = 5 },
-            //        new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "6B", AnalisisId = 6 }
-            //    };
-            //    context.LavadosRegeneraciones.AddRange(lavadosRegeneraciones);
-            //    context.SaveChanges();
-            //}
+
+            if (!context.LavadosRegeneraciones.Any())
+            {
+                var lavadosRegeneraciones = new LavadoRegeneracion[]
+                {
+                    new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "2B", AnalisisId = 1 },
+                    new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "1", AnalisisId = 2 },
+                    new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "3A", AnalisisId = 3 },
+                    new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "4B", AnalisisId = 4 },
+                    new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "5", AnalisisId = 5 },
+                    new LavadoRegeneracion { Fecha = DateTime.Now, ColumnaId = "6B", AnalisisId = 6 }
+                };
+                context.LavadosRegeneraciones.AddRange(lavadosRegeneraciones);
+                context.SaveChanges();
+            }
 
             if (!context.Comportamientos.Any())
             {

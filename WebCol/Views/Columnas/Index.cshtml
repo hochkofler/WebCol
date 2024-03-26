@@ -4,12 +4,26 @@
     ViewData["Title"] = "Index";
 }
 
+@section Styles {
+    <link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.2/b-3.0.1/b-html5-3.0.1/fc-5.0.0/fh-4.0.1/r-3.0.0/datatables.min.css" rel="stylesheet">
+    <style>
+        tfoot input {
+            width: 100%;
+        }
+        .btn-exportal-excel {
+            background-color: #198754 !important;
+            color: white !important;
+        }
+    </style>
+
+}
+
 <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table id="myTable" class="display" style="width:100%">
     <thead>
         <tr>
             <th>
@@ -80,4 +94,93 @@
         </tr>
 }
     </tbody>
+    <tfoot>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaIngreso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaEnMarcha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dimension)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FaseEstacionaria)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Clase)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhMin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhMax)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PresionMax)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Modelo)
+            </th>
+            <th></th>
+        </tr>
+    </tfoot>
 </table>
+
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.2/b-3.0.1/b-html5-3.0.1/fc-5.0.0/fh-4.0.1/r-3.0.0/datatables.min.js"></script>
+    <script>
+
+        new DataTable('#myTable', {
+            language: {
+                info: 'Página _PAGE_ de _PAGES_',
+                infoEmpty: 'No hay datos disponibles',
+                infoFiltered: '(filtrado de _MAX_ registros totales)',
+                lengthMenu: 'Mostrar _MENU_ registros por página',
+                zeroRecords: 'Nada encontrado - Lo siento',
+                search: "Buscar:"
+            },
+            layout: {
+                topStart: {
+                    buttons: [
+                        {
+                            extend: "excel",
+                            title: "",
+                            className: "btn-exportal-excel"
+                        }
+
+                    ]
+                }
+            },
+            fixedColumns: {
+                start: 2
+            },
+            initComplete: function () {
+                this.api()
+                    .columns()
+                    .every(function () {
+                        let column = this;
+                        let title = column.footer().textContent;
+
+                        // Create input element
+                        let input = document.createElement('input');
+                        input.placeholder = title.trim();
+                        column.footer().replaceChildren(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    });
+            },
+            fixedHeader: {
+                footer: true
+            }
+
+        });
+    </script>
+}
